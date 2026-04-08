@@ -1,0 +1,7 @@
+Highlights
+
+• First pheromone-driven self-organizing honeypot swarm architecture
+• Reverse ant colony model predicts attacker targets preemptively
+• LLM-generated phenotypes create context-aware deception content
+• Proved Deception Emergence Index > 1 (collective > individual)
+• 2.3× dwell time improvement over baselines on 500-node SDN testbed
