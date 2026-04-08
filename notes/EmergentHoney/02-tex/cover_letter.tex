@@ -1,0 +1,56 @@
+\documentclass[11pt]{letter}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\signature{[Corresponding Author Name]\\
+[Affiliation]\\
+[Email]}
+
+\address{[Author Address]\\[City, Country]}
+
+\begin{document}
+
+\begin{letter}{Prof.~[Editor Name]\\
+Editor-in-Chief\\
+\textit{Swarm and Evolutionary Computation}\\
+Elsevier}
+
+\opening{Dear Editor,}
+
+We are pleased to submit our manuscript entitled ``\textbf{EmergentHoney: Ant Colony Pheromone-Driven Self-Organizing Honeypot Swarm with LLM-Powered Deception Phenotypes}'' for consideration as a research article in \textit{Swarm and Evolutionary Computation}.
+
+\textbf{Summary.} This paper introduces EmergentHoney, a novel cyber deception framework that applies ant colony pheromone mechanisms to create a fully decentralized, self-organizing honeypot network. Unlike existing centralized or rule-based approaches, our system enables individual honeypot instances to autonomously decide where to deploy, when to migrate, and how to mutate their configurations — governed entirely by a pheromone-based protocol that encodes attacker interaction patterns. We integrate large language models (LLMs) as the ``phenotype expression'' mechanism, generating context-aware fake content tailored to each attacker's observed behavior.
+
+\textbf{Key contributions include:}
+\begin{enumerate}
+    \item A pheromone-driven self-organizing honeypot topology where deployment, migration, and mutation are governed by decentralized swarm rules (Algorithm 1), with formal convergence guarantees (Theorem 1).
+    \item A reverse ant colony model that interprets attacker reconnaissance trajectories as inverse foraging paths, enabling predictive deception deployment along anticipated attack vectors (Algorithm 2).
+    \item The Deception Emergence Index (DEI), a formally defined metric quantifying collective emergence in deception systems, with a proof that DEI $> 1$ under mild conditions (Theorem 2).
+    \item Comprehensive experimental evaluation on SDN-based testbeds (50--500 nodes) against multi-stage APT attacks, demonstrating 2.3$\times$ improvement in attacker dwell time and 68\% higher interaction rates compared to state-of-the-art baselines, with statistical significance confirmed via Wilcoxon signed-rank tests ($p < 0.001$) and large effect sizes (Cliff's $\delta > 0.71$).
+\end{enumerate}
+
+\textbf{Relevance to SWEVO.} This work sits squarely at the intersection of swarm intelligence and cybersecurity — two fields that \textit{Swarm and Evolutionary Computation} has championed. We establish a rigorous mathematical isomorphism between ant colony foraging and cyber deception, going beyond the common metaphorical use of bio-inspired analogies. The pheromone update equations, convergence proofs, and emergence analysis directly extend the ACO theoretical framework into a novel application domain. We believe this cross-pollination will be of significant interest to the journal's readership.
+
+\textbf{Novelty statement.} To the best of our knowledge, this is the first work to:
+(i)~apply pheromone-based swarm self-organization as the \emph{operational logic} of a deception system rather than as an optimization tool;
+(ii)~formally define and prove emergence in cyber deception (DEI $> 1$);
+(iii)~combine reverse ACO attacker modeling with LLM-powered phenotype generation for adaptive honeypot content.
+
+\textbf{Ethical considerations.} All experiments were conducted on isolated testbed networks with no real user data. The deception techniques described are purely defensive and comply with ethical guidelines for security research. We discuss responsible deployment considerations in Section VII.
+
+This manuscript has not been published elsewhere and is not under consideration by any other journal. All authors have read and approved the submitted version.
+
+We suggest the following potential reviewers who have expertise in relevant areas:
+\begin{itemize}
+    \item Prof.~Marco Dorigo (Universit\'{e} Libre de Bruxelles) — ant colony optimization foundations
+    \item Prof.~Sailik Sengupta (Arizona State University) — cyber deception and game theory
+    \item Prof.~Tian-Qi Chen (Carnegie Mellon University) — adaptive cybersecurity systems
+\end{itemize}
+
+We look forward to your favorable consideration.
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}
