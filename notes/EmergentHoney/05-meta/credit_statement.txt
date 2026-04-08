@@ -1,0 +1,18 @@
+CRediT Author Statement
+
+[Author 1]: Conceptualization, Methodology, Software, Formal analysis, Writing – original draft, Visualization.
+
+[Author 2]: Methodology, Validation, Investigation, Data curation, Writing – review & editing.
+
+[Author 3]: Supervision, Resources, Project administration, Funding acquisition, Writing – review & editing.
+
+---
+Notes for authors:
+- Replace [Author 1/2/3] with actual author names
+- Adjust contributions based on actual participation
+- CRediT taxonomy follows: https://credit.niso.org/
+- Available roles:
+  Conceptualization, Data curation, Formal analysis, Funding acquisition,
+  Investigation, Methodology, Project administration, Resources, Software,
+  Supervision, Validation, Visualization, Writing – original draft,
+  Writing – review & editing
