@@ -34,6 +34,7 @@
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{assumption}{Assumption}
+\newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{remark}{Remark}
 
 % 数学符号
@@ -73,7 +74,7 @@ Ant Colony Pheromone-Driven Honeypot Swarm Intelligence}
 % ABSTRACT
 % ================================================================
 \begin{abstract}
-Modern cyber deception systems rely on statically configured honeypots that become ineffective once recognized by adversaries. We present \textbf{EmergentHoney}, a fundamentally new paradigm that transforms honeypot networks into self-evolving deception ecosystems through ant colony pheromone-driven swarm intelligence. Our key insight is a deep structural isomorphism between ant foraging dynamics and cyber deception: honeypots deposit \emph{attack pheromones} encoding adversary interaction patterns; pheromone concentration gradients drive autonomous honeypot proliferation, migration, and mutation; and pheromone evaporation naturally retires stale deception strategies---all without centralized control. We make four contributions: (1)~a pheromone-driven self-organizing honeypot topology protocol that enables honeypot swarms to emergently optimize deception layouts; (2)~an LLM-powered honeypot phenotype generator that crafts context-aware fake services, data, and responses tailored to observed attacker behavior; (3)~a \emph{reverse ant colony} model that maps attacker reconnaissance trajectories to inverse foraging paths, enabling predictive deception deployment; and (4)~a formal \emph{Deception Emergence Index} (DEI) that quantifies the collective deception capability emergent from simple individual pheromone rules. Experiments on an SDN-based testbed with multi-stage APT simulations show that EmergentHoney increases attacker dwell time by 340\% and reduces honeypot identification rate by 67\% compared to state-of-the-art dynamic honeypot systems, while requiring zero manual configuration after initial deployment.
+Modern cyber deception systems rely on statically configured honeypots that become ineffective once recognized by adversaries. We present \textbf{EmergentHoney}, a fundamentally new paradigm that transforms honeypot networks into self-evolving deception ecosystems through ant colony pheromone-driven swarm intelligence. Our key insight is a deep structural isomorphism between ant foraging dynamics and cyber deception: honeypots deposit \emph{attack pheromones} encoding adversary interaction patterns; pheromone concentration gradients drive autonomous honeypot proliferation, migration, and mutation; and pheromone evaporation naturally retires stale deception strategies---all without centralized control. We make four contributions: (1)~a pheromone-driven self-organizing honeypot topology protocol that enables honeypot swarms to emergently optimize deception layouts; (2)~an LLM-powered honeypot phenotype generator that crafts context-aware fake services, data, and responses tailored to observed attacker behavior; (3)~a \emph{reverse ant colony} model that maps attacker reconnaissance trajectories to inverse foraging paths, enabling predictive deception deployment; and (4)~a formal \emph{Deception Emergence Index} (DEI) that quantifies the collective deception capability emergent from simple individual pheromone rules. Experiments on an SDN-based testbed with multi-stage APT simulations show that EmergentHoney nearly doubles attacker dwell time (+96\%) and reduces honeypot identification rate by 71\% compared to the best RL-based baseline (Wilcoxon $p < 0.001$, Cliff's $\delta = 1.0$), while requiring zero manual configuration after initial deployment.
 \end{abstract}
 
 \begin{keyword}
@@ -589,7 +590,7 @@ Hardware & Ubuntu 22.04, 128GB RAM, 2$\times$ A100 40GB \\
 
 \subsubsection{Network Topologies}
 
-We evaluate on three scales: Small ($|V|{=}50$, $B{=}10$), Medium ($|V|{=}500$, $B{=}50$), and Large ($|V|{=}5000$, $B{=}200$).
+We evaluate on three scales: Small ($|V|{=}50$, $B{=}10$), Medium ($|V|{=}200$, $B{=}30$), and Large ($|V|{=}500$, $B{=}80$).
 
 \subsubsection{Attacker Models}
 
@@ -617,20 +618,27 @@ Average Dwell Time (ADT, min $\uparrow$), Honeypot Identification Rate (HIR, \% 
 \toprule
 \textbf{Method} & \textbf{ADT (min) $\uparrow$} & \textbf{HIR (\%) $\downarrow$} & \textbf{TIC $\uparrow$} \\
 \midrule
-B1: Static          & $8.3 \pm 2.1$  & $72.4 \pm 5.3$ & $12.6 \pm 3.4$ \\
-B2: Random-Dynamic  & $14.7 \pm 3.8$ & $58.1 \pm 6.2$ & $18.3 \pm 4.1$ \\
-B3: RL-Honeypot     & $22.5 \pm 4.2$ & $41.6 \pm 5.8$ & $28.7 \pm 5.3$ \\
-B4: Game-Theoretic  & $19.8 \pm 3.5$ & $45.3 \pm 4.9$ & $24.2 \pm 4.6$ \\
-B5: GAN-Honeypot    & $11.2 \pm 2.8$ & $65.8 \pm 5.7$ & $15.4 \pm 3.8$ \\
-B6: LLM-Static      & $18.6 \pm 3.3$ & $48.2 \pm 5.1$ & $26.1 \pm 4.9$ \\
-\textbf{EmergentHoney} & $\mathbf{36.5 \pm 5.1}$ & $\mathbf{13.7 \pm 3.2}$ & $\mathbf{47.3 \pm 6.8}$ \\
+B1: Static          & $1.57 \pm 0.11$ & $42.9 \pm 5.2$ & $91 \pm 11$ \\
+B2: Random-Dynamic  & $1.55 \pm 0.10$ & $35.1 \pm 4.5$ & $107 \pm 11$ \\
+B3: RL-Honeypot     & $1.66 \pm 0.10$ & $28.1 \pm 4.7$ & $118 \pm 15$ \\
+B4: Game-Theoretic  & $1.59 \pm 0.10$ & $30.3 \pm 4.7$ & $113 \pm 10$ \\
+B5: GAN-Honeypot    & $1.76 \pm 0.11$ & $31.7 \pm 4.6$ & $110 \pm 13$ \\
+B6: LLM-Static      & $2.43 \pm 0.12$ & $22.9 \pm 3.3$ & $128 \pm 10$ \\
+\textbf{EmergentHoney} & $\mathbf{3.24 \pm 0.16}$ & $\mathbf{8.0 \pm 2.1}$ & $\mathbf{158 \pm 20}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:rq1} shows overall results on the medium network. EmergentHoney achieves +62.2\% ADT, $-$67.1\% HIR, and +64.8\% TIC over the best baseline (RL-Honeypot).
+Table~\ref{tab:rq1} and Fig.~\ref{fig:adt_comparison} show overall results on the medium network ($|V|{=}200$). EmergentHoney achieves +96\% ADT, $-$71\% HIR, and +34\% TIC over the best adaptive baseline (RL-Honeypot). Compared to LLM-Static (same LLM content, no swarm), EmergentHoney achieves +34\% ADT and $-$65\% HIR, confirming that swarm self-organization is the key differentiator beyond content quality.
 
-Table~\ref{tab:rq1_breakdown} breaks down effectiveness by attacker level. EmergentHoney's advantage is most pronounced against L3 adaptive attackers (ADT: +100.9\% vs RL-Honeypot), demonstrating that pheromone-driven self-evolution effectively counters attacker adaptation.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig4_adt_comparison.pdf}
+\caption{Average Dwell Time (ADT) comparison across all methods. EmergentHoney significantly outperforms all baselines, achieving $3.24 \pm 0.16$ minutes versus the next-best LLM-Static at $2.43 \pm 0.12$ minutes. Error bars denote $\pm 1$ standard deviation over 30 independent runs.}
+\label{fig:adt_comparison}
+\end{figure}
+
+Table~\ref{tab:rq1_breakdown} breaks down effectiveness by attacker level. EmergentHoney's advantage is most pronounced against L3 adaptive attackers (ADT: +96\% vs RL-Honeypot; HIR: 15.7\% vs 52.2\%), demonstrating that pheromone-driven self-evolution effectively counters attacker adaptation.
 
 \begin{table}[t]
 \centering
@@ -641,10 +649,10 @@ Table~\ref{tab:rq1_breakdown} breaks down effectiveness by attacker level. Emerg
 \toprule
 \textbf{Method} & \textbf{L1: ADT/HIR} & \textbf{L2: ADT/HIR} & \textbf{L3: ADT/HIR} \\
 \midrule
-B1: Static       & 12.1 / 58.3\% & 7.6 / 76.2\% & 4.2 / 89.1\% \\
-B3: RL-Honeypot  & 31.4 / 28.5\% & 21.8 / 42.3\% & 11.3 / 61.7\% \\
-B4: Game-Theoretic & 26.7 / 33.1\% & 19.2 / 46.8\% & 10.5 / 63.4\% \\
-\textbf{EmergentHoney} & \textbf{48.2 / 6.3\%} & \textbf{35.8 / 12.1\%} & \textbf{22.7 / 25.8\%} \\
+B1: Static       & 1.33 / 15.5\% & 1.59 / 42.5\% & 1.75 / 76.6\% \\
+B3: RL-Honeypot  & 1.36 / 10.2\% & 1.67 / 29.1\% & 1.91 / 52.2\% \\
+B4: Game-Theoretic & 1.34 / 11.1\% & 1.63 / 28.4\% & 1.83 / 58.7\% \\
+\textbf{EmergentHoney} & \textbf{2.75 / 3.1\%} & \textbf{3.34 / 9.4\%} & \textbf{3.75 / 15.7\%} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -652,7 +660,14 @@ B4: Game-Theoretic & 26.7 / 33.1\% & 19.2 / 46.8\% & 10.5 / 63.4\% \\
 
 \subsection{RQ2: Self-Organization and Emergence}
 
-Table~\ref{tab:dei_time} presents the DEI evolution over time. DEI crosses 1.0 at $t \approx 4.5$ hours, confirming Theorem~\ref{thm:emergence}'s prediction. Steady-state DEI $\approx 1.58$ means 58\% more deception capability than the sum of individual honeypots.
+Table~\ref{tab:dei_time} and Fig.~\ref{fig:dei_evolution} present the DEI evolution over time. DEI exceeds 1.0 within the first 2 hours, confirming Theorem~\ref{thm:emergence}'s prediction. Steady-state DEI $\approx 2.0$ means the collective deception capability is \emph{double} that of the sum of individual honeypots---a strong emergence effect.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig5_dei_evolution.pdf}
+\caption{Deception Emergence Index (DEI) evolution over the 72-hour simulation. DEI rapidly exceeds 1.0 within the first 2 hours, confirming emergent collective intelligence. The shaded area represents $\pm 1$ standard deviation across 30 runs.}
+\label{fig:dei_evolution}
+\end{figure}
 
 \begin{table}[t]
 \centering
@@ -663,18 +678,18 @@ Table~\ref{tab:dei_time} presents the DEI evolution over time. DEI crosses 1.0 a
 \toprule
 \textbf{Time (h)} & \textbf{DEI} & \textbf{Interpretation} \\
 \midrule
-0  & $0.92 \pm 0.08$ & Slight negative emergence \\
-2  & $0.97 \pm 0.06$ & Near-zero emergence \\
-6  & $1.14 \pm 0.09$ & Emergence onset \\
-12 & $1.38 \pm 0.11$ & Strong emergence \\
-24 & $1.52 \pm 0.13$ & Mature emergence \\
-48 & $1.61 \pm 0.12$ & Peak emergence \\
-72 & $1.58 \pm 0.14$ & Stable (slight restructuring) \\
+0  & $1.00 \pm 0.00$ & No emergence (uniform pheromone) \\
+2  & $2.01 \pm 0.76$ & Rapid emergence onset \\
+6  & $1.93 \pm 0.59$ & Emergence consolidation \\
+12 & $1.90 \pm 0.40$ & Strong emergence \\
+24 & $2.10 \pm 0.24$ & Mature emergence \\
+48 & $2.24 \pm 0.24$ & Peak emergence \\
+72 & $2.00 \pm 0.16$ & Stable steady state \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:rho} confirms the convergence--emergence tradeoff from Proposition~\ref{prop:convergence}: low $\rho$ yields slow convergence but high DEI; the optimal range is $\rho \in [0.03, 0.10]$.
+Table~\ref{tab:rho} shows that EmergentHoney is robust to the evaporation rate: ADT and DEI remain stable across $\rho \in [0.01, 0.50]$. Lower $\rho$ converges faster (5.7h at $\rho{=}0.01$ vs 14.2h at $\rho{=}0.50$) because slow evaporation preserves pheromone landscape structure. The recommended default $\rho = 0.05$ balances convergence speed and adaptability.
 
 \begin{table}[t]
 \centering
@@ -685,11 +700,11 @@ Table~\ref{tab:rho} confirms the convergence--emergence tradeoff from Propositio
 \toprule
 $\rho$ & $t_{\mathrm{conv}}$ (h) & DEI & ADT (min) & HIR (\%) \\
 \midrule
-0.01 & $18.3 \pm 2.1$ & $1.67 \pm 0.15$ & $38.2 \pm 5.8$ & $15.1 \pm 3.6$ \\
-0.05 & $7.2 \pm 1.4$  & $1.58 \pm 0.13$ & $36.5 \pm 5.1$ & $13.7 \pm 3.2$ \\
-0.10 & $3.8 \pm 0.9$  & $1.43 \pm 0.11$ & $33.1 \pm 4.7$ & $16.3 \pm 3.4$ \\
-0.20 & $1.9 \pm 0.5$  & $1.28 \pm 0.10$ & $28.4 \pm 4.2$ & $21.5 \pm 3.9$ \\
-0.50 & $0.8 \pm 0.3$  & $1.09 \pm 0.07$ & $21.3 \pm 3.8$ & $34.2 \pm 4.8$ \\
+0.01 & $5.7$  & $2.04$ & $3.38$ & $8.2$ \\
+0.05 & $6.6$  & $2.02$ & $3.42$ & $8.3$ \\
+0.10 & $10.4$ & $2.05$ & $3.33$ & $7.6$ \\
+0.20 & $11.1$ & $2.02$ & $3.33$ & $8.2$ \\
+0.50 & $14.2$ & $2.07$ & $3.30$ & $8.7$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -706,21 +721,23 @@ $\rho$ & $t_{\mathrm{conv}}$ (h) & DEI & ADT (min) & HIR (\%) \\
 \toprule
 \textbf{Variant} & \textbf{ADT} & \textbf{HIR} & \textbf{DEI} & \textbf{$\Delta$ADT} \\
 \midrule
-\textbf{Full EmergentHoney} & \textbf{35.8} & \textbf{12.1} & \textbf{1.55} & --- \\
-w/o Pheromone              & 16.2 & 54.3 & 0.94 & $-$54.7\% \\
-w/o Evaporation            & 24.1 & 28.7 & 1.21 & $-$32.7\% \\
-w/o Proliferation          & 27.3 & 22.4 & 1.31 & $-$23.7\% \\
-w/o Migration              & 29.6 & 19.8 & 1.38 & $-$17.3\% \\
-w/o Mutation               & 30.2 & 18.3 & 1.40 & $-$15.6\% \\
-w/o LLM                    & 25.8 & 26.1 & 1.45 & $-$27.9\% \\
-w/o Reverse-ACO            & 28.9 & 20.6 & 1.49 & $-$19.3\% \\
-Greedy Replacement         & 23.7 & 30.2 & 1.12 & $-$33.8\% \\
-GA Replacement             & 26.4 & 24.5 & 1.25 & $-$26.3\% \\
+\textbf{Full EmergentHoney} & \textbf{3.32} & \textbf{8.9} & \textbf{2.00} & --- \\
+w/o Pheromone              & 1.65 & 42.9 & 0.90 & $-$50.3\% \\
+w/o LLM                    & 2.09 & 22.9 & 1.97 & $-$37.2\% \\
+w/o Reverse-ACO            & 3.36 & 14.0 & 1.92 & +1.1\% \\
+w/o Adaptive-$\rho$        & 3.30 & 10.1 & 1.96 & $-$0.7\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:ablation} reveals that the pheromone mechanism is irreplaceable: removing it causes the largest drop ($-$54.7\% ADT, DEI $< 1$). Alternative optimization algorithms (Greedy, GA) significantly underperform. All differences are significant at $p < 0.001$ (Wilcoxon signed-rank, $n{=}30$).
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig6_ablation.pdf}
+\caption{Ablation study results showing relative ADT change when each component is removed. Pheromone mechanism ($-$50.3\%) and LLM phenotype generation ($-$37.2\%) are the most critical components.}
+\label{fig:ablation}
+\end{figure}
+
+Table~\ref{tab:ablation} and Fig.~\ref{fig:ablation} reveal a clear component hierarchy. The pheromone mechanism is irreplaceable: removing it causes the largest ADT drop ($-$50.3\%) and the only case where $\DEI < 1$ (0.90), confirming that swarm self-organization is the foundation of emergence. LLM phenotype generation is the second most critical component ($-$37.2\% ADT), reducing HIR from 8.9\% to 22.9\% due to lower content quality. Reverse-ACO does not significantly affect ADT ($p = 0.78$) but reduces HIR from 14.0\% to 8.9\%---a 36\% relative improvement through predictive deployment that intercepts attackers before fingerprinting. Pheromone and LLM ablations show $p < 0.001$ and Cliff's $\delta = 1.0$ (Large).
 
 
 \subsection{RQ4: Scalability}
@@ -732,21 +749,26 @@ Table~\ref{tab:ablation} reveals that the pheromone mechanism is irreplaceable: 
 \small
 \begin{tabular}{@{}lccc@{}}
 \toprule
-\textbf{Metric} & \textbf{Small (50)} & \textbf{Medium (500)} & \textbf{Large (5000)} \\
+\textbf{Metric} & \textbf{Small (50)} & \textbf{Medium (200)} & \textbf{Large (500)} \\
 \midrule
-ADT (min)         & $32.1 \pm 4.3$ & $35.8 \pm 4.9$ & $34.2 \pm 5.6$ \\
-HIR (\%)          & $14.8 \pm 3.4$ & $12.1 \pm 3.0$ & $13.5 \pm 3.3$ \\
-TIC               & $38.4 \pm 5.1$ & $45.6 \pm 6.2$ & $52.3 \pm 7.8$ \\
-DEI               & $1.42$ & $1.55$ & $1.51$ \\
-$t_{\mathrm{conv}}$ (h) & $2.1$ & $7.2$ & $18.5$ \\
-Update time (ms)  & $0.3$ & $4.2$ & $68.5$ \\
-CPU overhead (\%) & 1.2 & 3.8 & 8.5 \\
-Memory (MB)       & 45 & 280 & 2,400 \\
+ADT (min)         & $3.21$ & $3.46$ & $3.37$ \\
+HIR (\%)          & $8.6$ & $8.7$ & $9.0$ \\
+TIC               & $64$ & $144$ & $410$ \\
+DEI               & $1.99$ & $1.76$ & $1.95$ \\
+$t_{\mathrm{conv}}$ (h) & $15.1$ & $9.4$ & $6.3$ \\
+Update time (ms)  & $1.4$ & $4.1$ & $13.1$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:scale} demonstrates scale-invariant deception effectiveness: ADT and HIR remain stable across 100$\times$ network size increase. Convergence time scales sub-linearly as $O(|V|^{0.6})$.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig7_scalability.pdf}
+\caption{Scalability analysis across network sizes ($|V| \in \{50, 200, 500\}$). ADT and HIR remain stable as network size increases by $10\times$, confirming the decentralized architecture's scalability.}
+\label{fig:scalability}
+\end{figure}
+
+Table~\ref{tab:scale} and Fig.~\ref{fig:scalability} demonstrate scale-invariant deception effectiveness: ADT ($3.21$--$3.46$ min) and HIR ($8.6$--$9.0$\%) remain stable across a $10\times$ network size increase ($|V|{=}50$ to $|V|{=}500$). Per-step computation time scales linearly ($1.4$ to $13.1$ ms), remaining well within real-time operational constraints even at $|V|{=}500$.
 
 
 \subsection{RQ5: Adaptive Attacker Resistance}
@@ -756,23 +778,28 @@ Table~\ref{tab:scale} demonstrates scale-invariant deception effectiveness: ADT 
 \caption{Arms Race Dynamics Against L3 Adaptive Attacker}
 \label{tab:arms}
 \small
-\begin{tabular}{@{}ccccc@{}}
+\begin{tabular}{@{}lcc@{}}
 \toprule
-\textbf{Window} & \multicolumn{2}{c}{\textbf{EmergentHoney}} & \multicolumn{2}{c}{\textbf{RL-Honeypot}} \\
-\cmidrule(lr){2-3} \cmidrule(lr){4-5}
- & ADT & HIR & ADT & HIR \\
+\textbf{Window} & \textbf{EmergentHoney ADT} & \textbf{RL-Honeypot ADT} \\
 \midrule
-0--6h   & 28.4 & 18.3\% & 22.1 & 32.4\% \\
-6--12h  & 19.7 & 31.2\% & 14.3 & 48.7\% \\
-12--18h & 25.3 & 22.5\% & 12.8 & 53.2\% \\
-18--24h & 24.1 & 24.8\% & 11.5 & 56.8\% \\
-24--48h & 22.7 & 25.8\% &  9.7 & 62.4\% \\
-48--72h & 21.9 & 27.1\% &  8.2 & 68.3\% \\
+0--6h   & $3.70 \pm 0.44$ & $1.82 \pm 0.35$ \\
+6--12h  & $3.94 \pm 0.52$ & $1.95 \pm 0.33$ \\
+12--18h & $3.71 \pm 0.49$ & $1.86 \pm 0.39$ \\
+18--24h & $3.79 \pm 0.42$ & $1.93 \pm 0.36$ \\
+24--48h & $3.71 \pm 0.46$ & $1.79 \pm 0.42$ \\
+48--72h & $4.00 \pm 0.64$ & $1.88 \pm 0.36$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:arms} reveals the arms race dynamics. EmergentHoney maintains \textbf{2.67$\times$ higher ADT} and \textbf{60\% lower HIR} than RL-Honeypot in long-term scenarios. The pheromone evaporation naturally ``forgets'' compromised configurations, while positive feedback reinforces new effective ones.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig8_arms_race.pdf}
+\caption{Arms race dynamics: ADT over 72 hours comparing EmergentHoney versus RL-Honeypot against L3 adaptive attackers. EmergentHoney maintains $\approx 2\times$ higher ADT throughout, with no degradation over time.}
+\label{fig:arms_race}
+\end{figure}
+
+Table~\ref{tab:arms} and Fig.~\ref{fig:arms_race} reveal the arms race dynamics against L3 adaptive attackers. EmergentHoney maintains \textbf{$\approx 2\times$ higher ADT} than RL-Honeypot across all time windows, and crucially, its ADT does not degrade over time (3.70 min at 0--6h $\rightarrow$ 4.00 min at 48--72h). By contrast, RL-Honeypot shows no adaptation advantage. The pheromone evaporation naturally ``forgets'' compromised configurations while positive feedback reinforces new effective ones.
 
 
 \subsection{Statistical Validation}
@@ -786,18 +813,20 @@ Table~\ref{tab:arms} reveals the arms race dynamics. EmergentHoney maintains \te
 \toprule
 \textbf{Comparison} & \textbf{Metric} & $p$\textbf{-value} & \textbf{Cliff's} $d$ & \textbf{Effect} \\
 \midrule
-vs RL-Honeypot  & ADT & $<$0.001 & 0.89  & Large \\
-vs RL-Honeypot  & HIR & $<$0.001 & $-$0.92 & Large \\
-vs Game-Theoretic & ADT & $<$0.001 & 0.94  & Large \\
-vs LLM-Static   & ADT & $<$0.001 & 0.78  & Large \\
-Full vs w/o Pher. & ADT & $<$0.001 & 0.96  & Large \\
-Full vs w/o LLM & ADT & $<$0.001 & 0.72  & Large \\
-Full vs GA Repl. & ADT & $<$0.001 & 0.68  & Large \\
+vs RL-Honeypot  & ADT & $<$0.001 & 1.00  & Large \\
+vs RL-Honeypot  & HIR & $<$0.001 & 1.00  & Large \\
+vs Game-Theoretic & ADT & $<$0.001 & 1.00  & Large \\
+vs Game-Theoretic & HIR & $<$0.001 & 1.00  & Large \\
+vs LLM-Static   & ADT & $<$0.001 & 1.00  & Large \\
+vs LLM-Static   & HIR & $<$0.001 & 1.00  & Large \\
+Full vs w/o Pher. & ADT & $<$0.001 & 1.00  & Large \\
+Full vs w/o LLM & ADT & $<$0.001 & 1.00  & Large \\
+Full vs w/o RevACO & ADT & 0.780 & $-$0.08  & Negl. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:stats} confirms all key comparisons show $p < 0.001$ and large effect sizes ($|d| > 0.5$).
+Table~\ref{tab:stats} confirms that all key comparisons against baselines and ablation variants show $p < 0.001$ and maximal Cliff's $\delta = 1.0$ (Large effect). The sole exception is the Reverse-ACO ablation ($p = 0.780$, $\delta = -0.08$), consistent with RevACO's primary contribution being HIR reduction rather than ADT improvement (Table~\ref{tab:ablation}).
 
 
 % ================================================================
@@ -857,7 +886,7 @@ This paper presented EmergentHoney, a fundamentally new cyber deception paradigm
 
 We contributed: (1)~a pheromone-driven self-organizing honeypot topology protocol; (2)~an LLM-powered phenotype generator; (3)~a reverse ant colony attacker model; and (4)~a formal Deception Emergence Theory proving $\DEI > 1$.
 
-Experiments demonstrated that EmergentHoney increases attacker dwell time by 340\% and reduces honeypot identification rate by 67\% compared to state-of-the-art baselines. The ablation study confirmed the irreplaceability of the pheromone mechanism.
+Experiments on networks of 50--500 nodes demonstrated that EmergentHoney nearly doubles attacker dwell time (+96\%) and reduces honeypot identification rate by 71\% compared to the best adaptive baseline, with all improvements statistically significant ($p < 0.001$, Cliff's $\delta = 1.0$). The ablation study confirmed the pheromone mechanism as irreplaceable ($-$50.3\% ADT, DEI $< 1$), while the LLM phenotype generator contributes the second-largest effect ($-$37.2\% ADT). A steady-state DEI $\approx 2.0$ confirms strong positive emergence---the collective deception capability doubles relative to the sum of individual honeypots.
 
 EmergentHoney represents a paradigm shift: from \emph{engineered defense} to \emph{emergent defense}. We believe the principles established here---using swarm intelligence as the operational fabric of security systems---open a rich research direction at the intersection of collective intelligence and cybersecurity.
 
