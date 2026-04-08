@@ -7,7 +7,6 @@ import pathlib
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 import numpy as np
 
 # ---------------------------------------------------------------------------
@@ -43,10 +42,10 @@ COLORS = [
     "#DD8452",  # orange
 ]
 
-ROOT = pathlib.Path(__file__).resolve().parents[2]
-DATA_PATH = ROOT / "results" / "full_experiment_results.json"
-FIG_DIR = ROOT / "figures"
-FIG_DIR.mkdir(exist_ok=True)
+PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[3]
+DATA_PATH = PROJECT_ROOT / "06-results" / "full_experiment_results.json"
+FIG_DIR = PROJECT_ROOT / "07-figures"
+FIG_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def load_data():

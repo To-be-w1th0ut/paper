@@ -35,19 +35,48 @@ mininet>=2.3.0       # SDN网络仿真
 
 ## Reproducing Experiments
 
-### Quick Start (模拟模式)
+### Canonical Manuscript Artifacts
+
+The authoritative manuscript figures and summary tables are regenerated from:
+
+- `06-results/full_experiment_results.json`
+- `03-code/src/experiments/generate_figures.py`
+- `03-code/src/experiments/generate_tables.py`
+
+This is the recommended path for reproducing the exact numbers shown in the
+paper.
+
+Recommended environment setup:
 
 ```bash
-cd EmergentHoney_Draft
+cd 03-code
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Quick Start (机制模拟)
+
+```bash
+cd 03-code
+source .venv/bin/activate
 python -m src.experiments.experiment_runner
 ```
 
-This runs all 5 experiment categories with default parameters:
+This runs the prototype pheromone-driven simulation with default parameters:
 - |V| = 50 nodes, |H| = 8 types, B = 15 budget
 - 5 attackers, 200 time steps, 30 independent runs
 - Results saved to `results/experiment_summary.json`
 
-### Full Reproduction (论文参数)
+### Full Manuscript Artifact Regeneration
+
+```bash
+source 03-code/.venv/bin/activate
+python 03-code/src/experiments/generate_tables.py
+python 03-code/src/experiments/generate_figures.py
+```
+
+### Prototype Runner Configuration
 
 ```python
 from src.experiments.experiment_runner import ExperimentRunner, ExperimentConfig
@@ -68,7 +97,7 @@ runner = ExperimentRunner(config)
 runner.run_all_experiments()
 ```
 
-### Scalability Experiments (Table 8)
+### Scalability Experiments
 
 The experiment runner automatically tests |V| ∈ {50, 200, 500}.
 
@@ -104,13 +133,13 @@ Experiment outputs in `results/`:
 - `experiment_summary.json`: Aggregated statistics for all experiments
 - `results/analysis/`: Statistical test reports and figures
 
-Each experiment records per-run metrics:
-- Average Dwell Time (ADT) in seconds
-- Interaction Rate (IR)
-- Convergence step count
+The canonical manuscript bundle records:
+- Average Dwell Time (ADT) in hours
+- Honeypot Identification Rate (HIR)
+- Threat Intelligence Collection (TIC)
 - DEI values
-- Prediction precision/recall/F1
-- Computational overhead (ms per step)
+- Scalability summaries
+- Arms-race trajectories
 
 ## Ethical Statement
 

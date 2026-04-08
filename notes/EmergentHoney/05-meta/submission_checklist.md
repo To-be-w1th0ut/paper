@@ -26,16 +26,17 @@
 - [x] 完整LaTeX主文件 (`main.tex`)
 - [x] 关键图表TikZ代码 (6张图)
 
-### 需实验验证后替换 ⚠️
-- [ ] 实验数据为预测数据 → 需搭建真实测试床运行30轮实验
-- [ ] 部分参考文献标注[需验证] → 需逐条核实DOI/出处
+### 当前版本定位 ⚠️
+- [x] 当前稿件明确定位为 **SDN-informed 仿真/仿真驱动论文**
+- [x] 主稿、图表、摘要、cover letter 已统一到同一套 canonical results
+- [ ] 若转投更偏安全系统的期刊，再补真实测试床实验
 
 ### 投稿前必须补充 ❌
 - [ ] Graphical Abstract (期刊要求)
-- [ ] Highlights (3-5条, 每条≤85字符)
-- [ ] Cover Letter
+- [x] Highlights 已改写为 canonical 版本
+- [x] Cover Letter 已与主稿口径统一
+- [x] Data Availability Statement 已改写为 artifact 口径
 - [ ] Author Contributions (CRediT)
-- [ ] Data Availability Statement
 - [ ] 代码开源仓库 (GitHub链接)
 - [ ] 双盲匿名化 (移除作者信息、自引标注)
 
@@ -52,13 +53,9 @@
 - [ ] **检查**: DEI bound中 $T_{\min}$ 单位是否与 $\bar{d}$ 一致
 
 ### 实验设计
-- [x] 6个基线 (涵盖static, random, RL, game-theoretic, GAN, LLM-static)
-- [x] 3种攻击者等级
-- [x] 3种网络规模
-- [x] 消融实验 (8个变体 + 2个替代算法)
-- [x] 军备竞赛动态 (72小时时间窗)
-- [x] 统计检验 (Wilcoxon + Cliff's delta)
-- [ ] **补充**: 蒸发率敏感性分析的可视化图
+- [x] 主稿统一采用 50 / 200 / 500 节点规模
+- [x] DEI、消融、可扩展性、军备竞赛图表已对齐 canonical results
+- [ ] **补充**: 真实测试床版本的独立验证
 - [ ] **补充**: 运行时间对比表 (vs RL训练时间, vs 博弈论求解时间)
 
 ### 写作质量
@@ -107,17 +104,18 @@ We would like to submit our manuscript entitled "EmergentHoney: Self-Evolving
 Cyber Deception Ecosystems via Ant Colony Pheromone-Driven Honeypot Swarm
 Intelligence" for consideration in Swarm and Evolutionary Computation.
 
-This work presents a paradigm shift in applying swarm intelligence to
-cybersecurity: rather than using ACO as an optimization tool, we demonstrate
-that the pheromone mechanism can serve as the operational logic of a cyber
-deception system. Our honeypot swarm self-organizes deception topologies
-through biologically-inspired pheromone rules, achieving 340% higher attacker
-engagement and 67% lower identification rates compared to state-of-the-art.
+This work studies how pheromone-driven swarm coordination can serve as the
+online operating mechanism of a cyber deception system, rather than being used
+only as an offline optimizer. In an SDN-informed emulation study on 50--500
+node topologies, the resulting honeypot swarm self-organizes deception
+topologies through local pheromone rules and reaches 3.24h average attacker
+dwell time versus 1.66h for the strongest adaptive baseline, together with a
+71% reduction in honeypot identification rate.
 
 Key aspects aligning with the journal's scope:
 1. Novel application of ant colony pheromone dynamics as system-level protocol
 2. Formal proof of emergent collective behavior (DEI > 1)
-3. Demonstration that swarm intelligence is irreplaceable in this domain
+3. Evidence from ablation that the pheromone mechanism is the dominant driver of the observed gains
 
 This manuscript has not been submitted elsewhere and all authors approve
 the submission.
@@ -130,8 +128,8 @@ Sincerely,
 
 ## 五、Highlights 草稿
 
-1. First honeypot system where ant colony pheromone IS the operational logic, not an optimizer
-2. Formal proof that honeypot swarm achieves emergent deception capability (DEI > 1)
-3. 340% higher attacker dwell time vs state-of-the-art with zero human configuration
-4. Pheromone mechanism proven irreplaceable through comprehensive ablation study
-5. Scale-invariant performance validated across 50 to 5,000 node networks
+1. Pheromone-driven self-organization is treated as the core online coordination mechanism of the deception system
+2. DEI is used to quantify positive collective emergence in the released artifact
+3. The canonical result bundle shows 3.24h ADT versus 1.66h for the strongest adaptive baseline
+4. Ablation identifies the pheromone layer as the dominant contributor, with LLM and reverse-trajectory modules acting as support
+5. The current manuscript is positioned as an SDN-informed emulation study across 50, 200, and 500 node settings

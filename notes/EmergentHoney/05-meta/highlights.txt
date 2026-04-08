@@ -1,7 +1,7 @@
 Highlights
 
-• First pheromone-driven self-organizing honeypot swarm architecture
-• Reverse ant colony model predicts attacker targets preemptively
-• LLM-generated phenotypes create context-aware deception content
-• Proved Deception Emergence Index > 1 (collective > individual)
-• 2.3× dwell time improvement over baselines on 500-node SDN testbed
+• Pheromone dynamics drive decentralized honeypot self-organization
+• Swarm coordination sustains DEI ≈ 2.0 in the released emulation study
+• EmergentHoney reaches 3.24 h dwell time versus 1.66 h for RL baseline
+• Removing the pheromone mechanism cuts ADT by 50.3% and yields DEI < 1
+• LLM phenotype and reverse-trajectory modules act as supporting layers

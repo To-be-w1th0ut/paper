@@ -74,7 +74,7 @@ Ant Colony Pheromone-Driven Honeypot Swarm Intelligence}
 % ABSTRACT
 % ================================================================
 \begin{abstract}
-Modern cyber deception systems rely on statically configured honeypots that become ineffective once recognized by adversaries. We present \textbf{EmergentHoney}, a fundamentally new paradigm that transforms honeypot networks into self-evolving deception ecosystems through ant colony pheromone-driven swarm intelligence. Our key insight is a deep structural isomorphism between ant foraging dynamics and cyber deception: honeypots deposit \emph{attack pheromones} encoding adversary interaction patterns; pheromone concentration gradients drive autonomous honeypot proliferation, migration, and mutation; and pheromone evaporation naturally retires stale deception strategies---all without centralized control. We make four contributions: (1)~a pheromone-driven self-organizing honeypot topology protocol that enables honeypot swarms to emergently optimize deception layouts; (2)~an LLM-powered honeypot phenotype generator that crafts context-aware fake services, data, and responses tailored to observed attacker behavior; (3)~a \emph{reverse ant colony} model that maps attacker reconnaissance trajectories to inverse foraging paths, enabling predictive deception deployment; and (4)~a formal \emph{Deception Emergence Index} (DEI) that quantifies the collective deception capability emergent from simple individual pheromone rules. Experiments on an SDN-based testbed with multi-stage APT simulations show that EmergentHoney nearly doubles attacker dwell time (+96\%) and reduces honeypot identification rate by 71\% compared to the best RL-based baseline (Wilcoxon $p < 0.001$, Cliff's $\delta = 1.0$), while requiring zero manual configuration after initial deployment.
+Modern cyber deception systems rely on statically configured honeypots that lose value once adversaries recognize them. We present \textbf{EmergentHoney}, a decentralized cyber deception framework in which honeypot deployment, migration, and mutation are governed by ant-colony-style pheromone dynamics rather than a central controller. The paper's primary contribution is a pheromone-driven self-organizing topology protocol that turns swarm intelligence into the operational logic of the deception system itself. We further use an LLM-based phenotype layer and a lightweight reverse-trajectory predictor as supporting modules that improve realism and timing, but do not replace the core swarm mechanism. To quantify collective behavior, we define the \emph{Deception Emergence Index} (DEI) and analyze conditions under which coordinated honeypots outperform the sum of isolated honeypots. In a 72-hour SDN-informed emulation study on 50-, 200-, and 500-node topologies, EmergentHoney achieves \textbf{3.24 $\pm$ 0.16 hours} average attacker dwell time, versus \textbf{1.66 $\pm$ 0.10 hours} for the best adaptive RL baseline, while reducing honeypot identification rate by \textbf{71\%}. The ablation study shows that removing the pheromone mechanism causes the largest degradation (\textbf{-50.3\%} ADT, DEI $< 1$), supporting the claim that decentralized self-organization is the central source of performance.
 \end{abstract}
 
 \begin{keyword}
@@ -120,16 +120,14 @@ This isomorphism is not merely metaphorical---it is \emph{mathematical}. The phe
 This paper makes the following contributions:
 
 \begin{itemize}[leftmargin=*]
-\item \textbf{Pheromone-Driven Self-Organizing Honeypot Topology.} We propose the first honeypot network architecture where deployment, migration, and mutation of honeypot instances are governed entirely by a decentralized pheromone protocol (Section~\ref{sec:framework:topology}).
+\item \textbf{Pheromone-Driven Self-Organizing Honeypot Topology.} We propose a decentralized honeypot control protocol in which deployment, migration, and mutation decisions emerge directly from local pheromone updates rather than a central controller (Section~\ref{sec:framework:topology}).
 
-\item \textbf{LLM-Powered Honeypot Phenotype Generation.} We integrate large language models as the ``phenotype expression'' mechanism---given the pheromone-determined deployment decision, the LLM generates context-aware fake content tailored to the attacker's behavior (Section~\ref{sec:framework:llm}).
+\item \textbf{Deception Emergence Analysis.} We formally define the \emph{Deception Emergence Index} (DEI), connect it to path-level swarm coordination, and analyze sufficient conditions for positive emergence under the pheromone protocol (Sections~\ref{sec:framework:dei}--\ref{sec:theory}).
 
-\item \textbf{Reverse Ant Colony Attacker Modeling.} We introduce a novel \emph{reverse pheromone} model that interprets attacker reconnaissance trajectories as inverse ant foraging paths, enabling predictive deception deployment (Section~\ref{sec:framework:reverse}).
-
-\item \textbf{Deception Emergence Theory.} We formally define the \emph{Deception Emergence Index} (DEI) and prove that under mild conditions, $\DEI > 1$---the whole exceeds the sum of its parts (Sections~\ref{sec:framework:dei}--\ref{sec:theory}).
+\item \textbf{Supporting Realism and Timing Modules.} We incorporate an LLM-based phenotype layer and a reverse-trajectory predictor as supporting modules that improve realism and anticipation around the core swarm mechanism (Sections~\ref{sec:framework:llm}--\ref{sec:framework:reverse}).
 \end{itemize}
 
-We implement EmergentHoney on an SDN-based testbed using containerized honeypots (T-Pot and OpenCanary) orchestrated through OpenFlow, and evaluate it against multi-stage APT scenarios generated by the MITRE Caldera framework. Results demonstrate significant improvements over static, random-dynamic, RL-based, and game-theoretic baselines across all key metrics.
+We study EmergentHoney in an SDN-informed emulation environment that combines enterprise-style network topologies, container-level honeypot abstractions, and multi-stage attacker simulation. In this version, the released canonical result bundle is the authoritative source for manuscript tables and figures. Results show that the pheromone mechanism consistently outperforms static, random-dynamic, RL-based, and other comparison methods across the primary deception metrics.
 
 The remainder of this paper is organized as follows. Section~\ref{sec:related} reviews related work. Section~\ref{sec:problem} formalizes the problem. Section~\ref{sec:framework} presents the EmergentHoney framework. Section~\ref{sec:theory} provides theoretical analysis. Section~\ref{sec:experiments} reports experimental results. Section~\ref{sec:discussion} discusses limitations and future directions. Section~\ref{sec:conclusion} concludes.
 
@@ -146,11 +144,11 @@ We review four bodies of literature that intersect with EmergentHoney: (A)~honey
 
 Honeypot research has evolved through three generations. \emph{First-generation (static) honeypots}---including Honeyd~\cite{provos2003honeyd}, Kippo, and Cowrie---emulate fixed services at fixed locations. While effective against opportunistic attackers, they are trivially fingerprinted by sophisticated adversaries through timing analysis, response consistency checks, and behavioral probing~\cite{vetterl2020counting}. Large-scale deployments such as T-Pot~\cite{tpot2023} aggregate multiple static honeypots but do not address fundamental configuration rigidity.
 
-\emph{Second-generation (dynamic) honeypots} introduce adaptation. Provos~\cite{provos2004virtual} proposed virtual honeypots that mirror real services. Wagener et al.~\cite{wagener2009self} presented SGNET, a self-adaptive honeypot that learns interaction scripts. Dowling et al.~\cite{dowling2019using} applied reinforcement learning (DQN) to maximize attacker engagement time. Pauna et al.~\cite{pauna2018game} used game theory to derive optimal deception strategies. Sun et al.~\cite{sun2024honeygpt} proposed HoneyGPT, using LLMs for dynamic SSH responses.
+\emph{Second-generation (dynamic) honeypots} introduce adaptation. Provos~\cite{provos2004virtual} proposed virtual honeypots that mirror real services. Wagener et al.~\cite{wagener2009self} presented SGNET, a self-adaptive honeypot that learns interaction scripts. Dowling et al.~\cite{dowling2019using} applied reinforcement learning (DQN) to maximize attacker engagement time. Pauna et al.~\cite{pauna2018game} used game theory to derive optimal deception strategies. Wang et al.~\cite{sun2024honeygpt} proposed HoneyGPT, using large language models for dynamic shell-honeypot responses.
 
-\emph{Third-generation (intelligent/autonomous) honeypots} represent the emerging frontier. Chakraborty et al.~\cite{chakraborty2026gan} used GANs for diverse honeypot content but did not address topology-level self-organization. DeepDig~\cite{sun2023deepdig} leveraged deep RL for decoy deployment in cloud environments.
+\emph{Third-generation (intelligent/autonomous) honeypots} represent the emerging frontier. Recent works have explored generative content and learning-based adaptive defense, but they do not address topology-level self-organization of honeypot swarms~\cite{huang2020adaptive}.
 
-\textbf{Gap:} All existing approaches operate within a \emph{centralized control paradigm}. No prior work achieves \emph{decentralized, emergent self-organization} of honeypot topologies. EmergentHoney is the first framework where the deception network's structure and behavior emerge from local pheromone interactions.
+\textbf{Gap:} The reviewed literature still operates largely within a \emph{centralized control paradigm}. We are not aware of prior honeypot work that studies \emph{decentralized, pheromone-driven self-organization} of topology as the primary adaptation mechanism.
 
 \subsection{Moving Target Defense (MTD)}
 
@@ -162,11 +160,11 @@ Moving target defense~\cite{jajodia2011mtd} shifts strategy from static protecti
 
 Swarm intelligence algorithms have been applied to cybersecurity primarily as optimization tools: ACO for feature selection in IDS~\cite{chaalal2014aco}, PSO for SVM parameters~\cite{alazzam2020pso}, ABC for cryptographic keys~\cite{elminaam2018abc}, and firefly algorithm for security testing~\cite{khari2019firefly}. Sayed et al.~\cite{sayed2023survey} survey these applications comprehensively. In deception specifically, Zhang et al.~\cite{zhang2019pso} used PSO for one-time honeypot placement optimization.
 
-\textbf{Gap:} Existing works use swarm intelligence to optimize \emph{parameters} of security systems. EmergentHoney represents a paradigm shift: swarm intelligence is not optimizing the deception system---it \emph{constitutes} the deception system.
+\textbf{Gap:} Existing works use swarm intelligence to optimize \emph{parameters} of security systems. In contrast, EmergentHoney uses the pheromone mechanism as the \emph{online coordination protocol} of the deception system rather than as an offline optimizer.
 
 \subsection{LLM-Powered Security Applications}
 
-LLMs have penetrated cybersecurity: PentestGPT~\cite{deng2024pentestgpt} for penetration testing, LLM agents for vulnerability exploitation~\cite{fang2024llm}, threat intelligence extraction~\cite{li2024chatgpt}, log analysis~\cite{sharma2024llm}, and vulnerability detection~\cite{zhou2024llm}. For deception, McKee et al.~\cite{mckee2023chatbots} explored ChatGPT for phishing email generation; HoneyGPT~\cite{sun2024honeygpt} applied LLMs to SSH honeypot responses.
+LLMs have already entered cybersecurity workflows: PentestGPT~\cite{deng2024pentestgpt} for penetration testing, LLM agents for vulnerability exploitation~\cite{fang2024llm}, and HoneyGPT~\cite{sun2024honeygpt} for interactive honeypot responses. These works show that LLMs can improve tactical interaction quality, but they do not provide a decentralized orchestration layer for deciding where and when deception assets should evolve.
 
 \textbf{Gap:} LLM-powered deception lacks a \emph{strategic orchestration layer}. EmergentHoney provides this layer: swarm intelligence determines the \emph{strategic} decisions (where, when, what type), while LLMs handle the \emph{tactical} decisions (specific content).
 
@@ -189,7 +187,7 @@ Topology-level adaptation  & \texttimes & \texttimes & \checkmark & \checkmark &
 Emergent collective behavior & \texttimes & \texttimes & \texttimes & \texttimes & \checkmark \\
 LLM-powered content        & \texttimes & Partial    & \texttimes & \texttimes & \checkmark \\
 Predictive deployment      & \texttimes & \texttimes & Partial    & \texttimes & \checkmark \\
-Zero human configuration   & \texttimes & \texttimes & \texttimes & \texttimes & \checkmark \\
+Controller-free adaptation & \texttimes & \texttimes & \texttimes & \texttimes & \checkmark \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -566,11 +564,11 @@ Our convergence analysis (Proposition~\ref{prop:convergence}) extends the classi
 
 \subsubsection{Network Environment}
 
-Table~\ref{tab:setup} summarizes the testbed specification. We implement EmergentHoney on a software-defined network testbed with Floodlight v1.2, Mininet 2.3.0, Docker-based honeypots (T-Pot CE 23.x + OpenCanary 0.9), and GPT-4o / Llama-3-8B for phenotype generation. Attack simulation uses MITRE Caldera v4.2.
+Table~\ref{tab:setup} summarizes the reference configuration for the released emulation artifact. The current manuscript reports an SDN-informed simulation/emulation study: Floodlight, Mininet, T-Pot, OpenCanary, and Caldera define the intended deployment stack, while the published figures and tables are regenerated from the canonical result bundle included with the repository.
 
 \begin{table}[t]
 \centering
-\caption{Testbed Configuration}
+\caption{Reference Emulation Configuration}
 \label{tab:setup}
 \small
 \begin{tabular}{@{}ll@{}}
@@ -600,11 +598,11 @@ Each experiment runs for 72 simulated hours with Poisson attack arrivals ($\lamb
 
 \subsubsection{Baselines}
 
-Six baselines: B1~(Static), B2~(Random-Dynamic), B3~(RL-Honeypot, PPO-based~\cite{dowling2019using}), B4~(Game-Theoretic, Stackelberg~\cite{pauna2018game,zhu2013game}), B5~(GAN-Honeypot~\cite{chakraborty2026gan}), B6~(LLM-Static, same LLM content but no swarm).
+The canonical result bundle includes six comparison methods: B1~(Static), B2~(Random-Dynamic), B3~(RL-Honeypot), B4~(Game-Theoretic), B5~(GAN-Honeypot), and B6~(LLM-Static, same phenotype layer without swarm adaptation).
 
 \subsubsection{Evaluation Metrics}
 
-Average Dwell Time (ADT, min $\uparrow$), Honeypot Identification Rate (HIR, \% $\downarrow$), Threat Intelligence Collection (TIC, count $\uparrow$), Deception Emergence Index (DEI, ratio), Convergence Time ($t_{\mathrm{conv}}$, hours), and Resource Overhead (RO, \%).
+Average Dwell Time (ADT, hours $\uparrow$), Honeypot Identification Rate (HIR, \% $\downarrow$), Threat Intelligence Collection (TIC, count $\uparrow$), Deception Emergence Index (DEI, ratio), Convergence Time ($t_{\mathrm{conv}}$, hours), and Resource Overhead (RO, \%).
 
 
 \subsection{RQ1: Deception Effectiveness}
@@ -616,7 +614,7 @@ Average Dwell Time (ADT, min $\uparrow$), Honeypot Identification Rate (HIR, \% 
 \small
 \begin{tabular}{@{}lccc@{}}
 \toprule
-\textbf{Method} & \textbf{ADT (min) $\uparrow$} & \textbf{HIR (\%) $\downarrow$} & \textbf{TIC $\uparrow$} \\
+\textbf{Method} & \textbf{ADT (hours) $\uparrow$} & \textbf{HIR (\%) $\downarrow$} & \textbf{TIC $\uparrow$} \\
 \midrule
 B1: Static          & $1.57 \pm 0.11$ & $42.9 \pm 5.2$ & $91 \pm 11$ \\
 B2: Random-Dynamic  & $1.55 \pm 0.10$ & $35.1 \pm 4.5$ & $107 \pm 11$ \\
@@ -629,12 +627,12 @@ B6: LLM-Static      & $2.43 \pm 0.12$ & $22.9 \pm 3.3$ & $128 \pm 10$ \\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:rq1} and Fig.~\ref{fig:adt_comparison} show overall results on the medium network ($|V|{=}200$). EmergentHoney achieves +96\% ADT, $-$71\% HIR, and +34\% TIC over the best adaptive baseline (RL-Honeypot). Compared to LLM-Static (same LLM content, no swarm), EmergentHoney achieves +34\% ADT and $-$65\% HIR, confirming that swarm self-organization is the key differentiator beyond content quality.
+Table~\ref{tab:rq1} and Fig.~\ref{fig:adt_comparison} show overall results on the medium network ($|V|{=}200$). EmergentHoney achieves +96\% ADT, $-$71\% HIR, and +34\% TIC over the best adaptive baseline (RL-Honeypot). Compared to LLM-Static (same phenotype layer, no swarm adaptation), EmergentHoney still gains +34\% ADT and $-$65\% HIR, confirming that decentralized self-organization is the primary differentiator beyond content realism.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/fig4_adt_comparison.pdf}
-\caption{Average Dwell Time (ADT) comparison across all methods. EmergentHoney significantly outperforms all baselines, achieving $3.24 \pm 0.16$ minutes versus the next-best LLM-Static at $2.43 \pm 0.12$ minutes. Error bars denote $\pm 1$ standard deviation over 30 independent runs.}
+\caption{Average Dwell Time (ADT) comparison across all methods. EmergentHoney achieves $3.24 \pm 0.16$ hours versus the next-best LLM-Static at $2.43 \pm 0.12$ hours. Error bars denote $\pm 1$ standard deviation over 30 independent runs.}
 \label{fig:adt_comparison}
 \end{figure}
 
@@ -660,7 +658,7 @@ B4: Game-Theoretic & 1.34 / 11.1\% & 1.63 / 28.4\% & 1.83 / 58.7\% \\
 
 \subsection{RQ2: Self-Organization and Emergence}
 
-Table~\ref{tab:dei_time} and Fig.~\ref{fig:dei_evolution} present the DEI evolution over time. DEI exceeds 1.0 within the first 2 hours, confirming Theorem~\ref{thm:emergence}'s prediction. Steady-state DEI $\approx 2.0$ means the collective deception capability is \emph{double} that of the sum of individual honeypots---a strong emergence effect.
+Table~\ref{tab:dei_time} and Fig.~\ref{fig:dei_evolution} present the DEI evolution over time. DEI exceeds 1.0 within the first 2 hours, confirming positive collective emergence in the released artifact. Steady-state DEI $\approx 2.0$ means the coordinated swarm roughly doubles the deception capability implied by isolated honeypot measurements.
 
 \begin{figure}[t]
 \centering
@@ -689,7 +687,7 @@ Table~\ref{tab:dei_time} and Fig.~\ref{fig:dei_evolution} present the DEI evolut
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:rho} shows that EmergentHoney is robust to the evaporation rate: ADT and DEI remain stable across $\rho \in [0.01, 0.50]$. Lower $\rho$ converges faster (5.7h at $\rho{=}0.01$ vs 14.2h at $\rho{=}0.50$) because slow evaporation preserves pheromone landscape structure. The recommended default $\rho = 0.05$ balances convergence speed and adaptability.
+Table~\ref{tab:rho} shows that EmergentHoney remains effective across $\rho \in [0.01, 0.50]$. In the released artifact, the measured convergence window increases with $\rho$ (5.7h at $\rho{=}0.01$ vs 14.2h at $\rho{=}0.50$), which we treat as an implementation-specific calibration effect rather than a universal theoretical law. The recommended default $\rho = 0.05$ balances emergence quality and adaptation in the canonical study.
 
 \begin{table}[t]
 \centering
@@ -698,7 +696,7 @@ Table~\ref{tab:rho} shows that EmergentHoney is robust to the evaporation rate: 
 \small
 \begin{tabular}{@{}ccccc@{}}
 \toprule
-$\rho$ & $t_{\mathrm{conv}}$ (h) & DEI & ADT (min) & HIR (\%) \\
+$\rho$ & $t_{\mathrm{conv}}$ (h) & DEI & ADT (hours) & HIR (\%) \\
 \midrule
 0.01 & $5.7$  & $2.04$ & $3.38$ & $8.2$ \\
 0.05 & $6.6$  & $2.02$ & $3.42$ & $8.3$ \\
@@ -737,7 +735,7 @@ w/o Adaptive-$\rho$        & 3.30 & 10.1 & 1.96 & $-$0.7\% \\
 \label{fig:ablation}
 \end{figure}
 
-Table~\ref{tab:ablation} and Fig.~\ref{fig:ablation} reveal a clear component hierarchy. The pheromone mechanism is irreplaceable: removing it causes the largest ADT drop ($-$50.3\%) and the only case where $\DEI < 1$ (0.90), confirming that swarm self-organization is the foundation of emergence. LLM phenotype generation is the second most critical component ($-$37.2\% ADT), reducing HIR from 8.9\% to 22.9\% due to lower content quality. Reverse-ACO does not significantly affect ADT ($p = 0.78$) but reduces HIR from 14.0\% to 8.9\%---a 36\% relative improvement through predictive deployment that intercepts attackers before fingerprinting. Pheromone and LLM ablations show $p < 0.001$ and Cliff's $\delta = 1.0$ (Large).
+Table~\ref{tab:ablation} and Fig.~\ref{fig:ablation} reveal a clear component hierarchy. Removing the pheromone mechanism causes the largest ADT drop ($-$50.3\%) and is the only case where $\DEI < 1$ (0.90), indicating that swarm self-organization is the dominant driver of emergence in the current artifact. The phenotype layer is the second most important module ($-$37.2\% ADT). Reverse-ACO has a secondary effect that is more visible in identification resistance than in raw dwell time. This supports the paper's refocused claim that the swarm mechanism is primary and the other modules are supportive.
 
 
 \subsection{RQ4: Scalability}
@@ -751,7 +749,7 @@ Table~\ref{tab:ablation} and Fig.~\ref{fig:ablation} reveal a clear component hi
 \toprule
 \textbf{Metric} & \textbf{Small (50)} & \textbf{Medium (200)} & \textbf{Large (500)} \\
 \midrule
-ADT (min)         & $3.21$ & $3.46$ & $3.37$ \\
+ADT (hours)       & $3.21$ & $3.46$ & $3.37$ \\
 HIR (\%)          & $8.6$ & $8.7$ & $9.0$ \\
 TIC               & $64$ & $144$ & $410$ \\
 DEI               & $1.99$ & $1.76$ & $1.95$ \\
@@ -837,7 +835,7 @@ Table~\ref{tab:stats} confirms that all key comparisons against baselines and ab
 
 \subsection{Limitations and Mitigation Strategies}
 
-\textbf{L1: SDN Dependency.} EmergentHoney requires SDN or cloud-native infrastructure for programmatic honeypot deployment and migration. While SDN adoption is growing rapidly in enterprise and cloud environments~\cite{kreutz2015sdn}, this limits applicability in legacy networks. \emph{Mitigation:} A lightweight agent-based variant could operate without full SDN support by deploying software agents on commodity servers that coordinate via a gossip protocol, approximating pheromone dynamics without centralized SDN control.
+\textbf{L1: Deployment Gap Between Artifact and Production.} EmergentHoney is currently evaluated through an SDN-informed emulation artifact rather than a full end-to-end production deployment. Real SDN or cloud-native infrastructure would still be required for programmatic honeypot deployment and migration. \emph{Mitigation:} A next-stage implementation should bind the current control logic to a concrete orchestration layer and repeat the evaluation under real deployment constraints.
 
 \textbf{L2: LLM Latency and Cost.} Generating honeypot phenotypes via LLM API calls introduces latency (1--5s for GPT-4o) and monetary costs (\$0.01--0.03 per phenotype generation). \emph{Mitigation:} (1)~Deploy locally quantized models (Llama-3-8B-Q4) achieving $<$500ms latency; (2)~pre-generate phenotype libraries during low-activity periods; (3)~cache frequently used phenotypes with an LRU eviction policy tied to pheromone values.
 
@@ -859,9 +857,9 @@ A natural question is whether centralized optimization (e.g., solving the CDV ob
 
 EmergentHoney is a purely defensive technology. Honeypot instances do not interact with external systems, initiate outbound connections, or attack other hosts. All deception content is generated within the defended network's perimeter. The threat intelligence collected follows established legal frameworks for honeypot data collection~\cite{sokol2018legal}. Specifically: (1)~no personally identifiable information (PII) of legitimate users is collected; (2)~attacker interactions are logged solely for security research purposes; (3)~the LLM-generated content is filtered to prevent inclusion of real sensitive data.
 
-\subsection{Deployment Considerations}
+\subsection{Artifact Calibration and Deployment Considerations}
 
-\textbf{Parameter Selection.} Based on our experimental findings, we recommend the following default parameters: evaporation rate $\rho = 0.05$ (balancing convergence speed and emergence quality, cf.\ Table~\ref{tab:rho}), proliferation threshold $\theta_{\mathrm{prolif}} = 0.7 \cdot \tau_{\max}$, migration threshold $\theta_{\mathrm{migrate}} = 0.2 \cdot \tau_{\max}$, and pheromone update interval $\Delta t = 5$ minutes.
+\textbf{Parameter Selection.} Based on the released emulation study, we recommend the following default parameters for the current artifact: evaporation rate $\rho = 0.05$, proliferation threshold $\theta_{\mathrm{prolif}} = 0.7 \cdot \tau_{\max}$, migration threshold $\theta_{\mathrm{migrate}} = 0.2 \cdot \tau_{\max}$, and pheromone update interval $\Delta t = 5$ minutes. These values should be treated as artifact calibrations until a deployment-backed study is completed.
 
 \textbf{Incremental Deployment.} EmergentHoney can be incrementally deployed alongside existing honeypot infrastructure. Existing static honeypots serve as ``seed'' nodes with elevated initial pheromone, accelerating the cold-start phase while the pheromone mechanism gradually optimizes the overall topology.
 
@@ -882,13 +880,11 @@ EmergentHoney is a purely defensive technology. Honeypot instances do not intera
 \section{Conclusion}
 \label{sec:conclusion}
 
-This paper presented EmergentHoney, a fundamentally new cyber deception paradigm that transforms static honeypot networks into self-evolving deception ecosystems through ant colony pheromone-driven swarm intelligence. Unlike prior approaches that treat honeypot management as a centralized optimization problem, EmergentHoney achieves fully decentralized, zero-configuration deception where the swarm intelligence protocol \emph{is} the defense system.
+This paper presented EmergentHoney, a cyber deception framework in which pheromone dynamics govern where honeypots appear, when they move, and how the deception topology reconfigures under pressure. The central contribution is therefore not ``ACO applied to security,'' but a \emph{pheromone-driven self-organizing deception topology} in which swarm intelligence serves as the operational fabric of the defense mechanism.
 
-We contributed: (1)~a pheromone-driven self-organizing honeypot topology protocol; (2)~an LLM-powered phenotype generator; (3)~a reverse ant colony attacker model; and (4)~a formal Deception Emergence Theory proving $\DEI > 1$.
+Within the released SDN-informed emulation study, EmergentHoney achieves \textbf{3.24 $\pm$ 0.16 hours} average attacker dwell time, nearly doubling the best adaptive RL baseline, while reducing honeypot identification rate by \textbf{71\%}. The ablation study further shows that removing the pheromone mechanism cuts dwell time by \textbf{50.3\%} and drops DEI below \textbf{1.0}, indicating that the swarm advantage disappears once decentralized self-organization is removed.
 
-Experiments on networks of 50--500 nodes demonstrated that EmergentHoney nearly doubles attacker dwell time (+96\%) and reduces honeypot identification rate by 71\% compared to the best adaptive baseline, with all improvements statistically significant ($p < 0.001$, Cliff's $\delta = 1.0$). The ablation study confirmed the pheromone mechanism as irreplaceable ($-$50.3\% ADT, DEI $< 1$), while the LLM phenotype generator contributes the second-largest effect ($-$37.2\% ADT). A steady-state DEI $\approx 2.0$ confirms strong positive emergence---the collective deception capability doubles relative to the sum of individual honeypots.
-
-EmergentHoney represents a paradigm shift: from \emph{engineered defense} to \emph{emergent defense}. We believe the principles established here---using swarm intelligence as the operational fabric of security systems---open a rich research direction at the intersection of collective intelligence and cybersecurity.
+The phenotype layer and reverse-trajectory predictor remain useful supporting modules, but the empirical and theoretical center of gravity is the pheromone mechanism itself. Future work should connect the current artifact to a fully instrumented SDN deployment and repeat the same evaluation pipeline under real operational constraints.
 
 % ================================================================
 % REFERENCES

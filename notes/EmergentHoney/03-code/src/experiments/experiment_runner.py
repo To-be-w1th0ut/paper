@@ -371,6 +371,8 @@ class ExperimentConfig:
     num_steps: int = 200
     num_runs: int = 30
     random_seed: int = 42
+    dei_eval_steps: int = 60
+    dei_eval_repeats: int = 3
 
     # 输出
     output_dir: str = "results"
@@ -695,23 +697,21 @@ class ExperimentRunner:
                         )
 
         # 计算指标
-        metrics.avg_dwell_time = np.mean(all_dwells) if all_dwells else 0.0
+        metrics.avg_dwell_time = float(np.mean(all_dwells)) if all_dwells else 0.0
         metrics.dwell_times = all_dwells
         metrics.interaction_rate = total_interactions / max(cfg.num_steps, 1)
-        metrics.avg_step_time_ms = np.mean(step_times)
+        metrics.avg_step_time_ms = float(np.mean(step_times)) if step_times else 0.0
 
         if metrics.convergence_step == 0:
             metrics.convergence_step = cfg.num_steps
 
-        # DEI计算
+        # DEI计算: 显式比较“固定蜂群配置”与“单蜜罐隔离配置”
         if track_dei:
-            individual_dwells = {}
-            collective_dwells = {}
-            for pos in organizer.get_honeypot_positions():
-                individual_dwells[pos] = np.mean(all_dwells) * 0.6 if all_dwells else 0
-                collective_dwells[pos] = np.mean(all_dwells) if all_dwells else 0
-            metrics.dei_value = organizer.compute_dei(
-                individual_dwells, collective_dwells
+            metrics.dei_value = self._evaluate_empirical_dei(
+                topology=topology,
+                honeypots=organizer.get_honeypot_types(),
+                run_id=run_id,
+                eval_steps=cfg.dei_eval_steps,
             )
 
         # 预测准确率
@@ -780,10 +780,10 @@ class ExperimentRunner:
                             f"atk_bl_{run_id}_{step}_{i}", topology
                         )
 
-        metrics.avg_dwell_time = np.mean(all_dwells) if all_dwells else 0.0
+        metrics.avg_dwell_time = float(np.mean(all_dwells)) if all_dwells else 0.0
         metrics.dwell_times = all_dwells
         metrics.interaction_rate = total_interactions / max(cfg.num_steps, 1)
-        metrics.avg_step_time_ms = np.mean(step_times)
+        metrics.avg_step_time_ms = float(np.mean(step_times)) if step_times else 0.0
 
         return metrics
 
@@ -794,6 +794,109 @@ class ExperimentRunner:
         metrics = self._run_emergent_honey(0)
         self.config = old_config
         return metrics
+
+    def _simulate_fixed_honeypots(
+        self,
+        topology: SDNTopology,
+        honeypots: Dict[int, int],
+        seed: int,
+        num_steps: int,
+    ) -> Dict[int, List[float]]:
+        """
+        在固定蜜罐配置下运行评估，不执行任何自组织更新。
+
+        Returns:
+            {position: [engagement_time, ...]}
+        """
+        np.random.seed(seed)
+        attackers = self._create_attackers(topology)
+        honeypot_positions = set(honeypots.keys())
+        dwell_by_position: Dict[int, List[float]] = {
+            pos: [] for pos in honeypot_positions
+        }
+
+        for step in range(num_steps):
+            for attacker in attackers:
+                if not attacker.active:
+                    continue
+
+                _, interaction = attacker.step(honeypot_positions, float(step))
+                if interaction and interaction.position in honeypot_positions:
+                    interaction.hp_type = honeypots[interaction.position]
+                    dwell_by_position[interaction.position].append(
+                        interaction.engagement_time
+                    )
+
+            for idx, attacker in enumerate(attackers):
+                if not attacker.active and step < num_steps - 5:
+                    if np.random.random() < 0.1:
+                        attackers[idx] = self._create_single_attacker(
+                            f"dei_{seed}_{step}_{idx}", topology
+                        )
+
+        return dwell_by_position
+
+    def _evaluate_empirical_dei(
+        self,
+        topology: SDNTopology,
+        honeypots: Dict[int, int],
+        run_id: int,
+        eval_steps: int,
+    ) -> float:
+        """
+        通过显式实验估计 DEI:
+        1. 固定最终蜂群配置，测量 collective dwell
+        2. 对每个蜜罐分别单独部署，测量 isolated dwell
+        3. 对每种配置重复采样若干次，降低单次随机波动
+        4. 计算 DEI = D_swarm / Σ d_i
+        """
+        if not honeypots:
+            return 1.0
+
+        eval_repeats = max(self.config.dei_eval_repeats, 1)
+        collective_samples: Dict[int, List[float]] = {
+            pos: [] for pos in honeypots
+        }
+        for repeat in range(eval_repeats):
+            collective_eval = self._simulate_fixed_honeypots(
+                topology=topology,
+                honeypots=honeypots,
+                seed=self.config.random_seed + run_id + 10_000 + repeat,
+                num_steps=eval_steps,
+            )
+            for pos, values in collective_eval.items():
+                collective_samples[pos].extend(values)
+
+        collective_dwells = {
+            pos: float(np.mean(values)) if values else 0.0
+            for pos, values in collective_samples.items()
+        }
+
+        individual_dwells: Dict[int, float] = {}
+        for idx, (pos, hp_type) in enumerate(honeypots.items()):
+            values: List[float] = []
+            for repeat in range(eval_repeats):
+                isolated_eval = self._simulate_fixed_honeypots(
+                    topology=topology,
+                    honeypots={pos: hp_type},
+                    seed=(
+                        self.config.random_seed
+                        + run_id
+                        + 20_000
+                        + idx * 100
+                        + repeat
+                    ),
+                    num_steps=eval_steps,
+                )
+                values.extend(isolated_eval.get(pos, []))
+            individual_dwells[pos] = float(np.mean(values)) if values else 0.0
+
+        temp_engine = PheromoneEngine(
+            num_positions=self.config.num_nodes,
+            num_types=self.config.num_hp_types,
+        )
+        temp_organizer = SelfOrganizer(temp_engine, budget=self.config.budget)
+        return temp_organizer.compute_dei(individual_dwells, collective_dwells)
 
     def _create_attackers(self, topology: SDNTopology) -> List[AttackerSimulator]:
         """创建攻击者"""
@@ -807,12 +910,21 @@ class ExperimentRunner:
         self, attacker_id: str, topology: SDNTopology
     ) -> AttackerSimulator:
         """创建单个攻击者"""
+        sophistication = float(np.clip(
+            self.config.attacker_sophistication + np.random.normal(0, 0.1), 0.0, 1.0
+        ))
+        persistence = float(np.clip(
+            self.config.attacker_persistence + np.random.normal(0, 0.1), 0.0, 1.0
+        ))
+        adaptiveness = float(np.clip(
+            self.config.attacker_adaptiveness + np.random.normal(0, 0.1), 0.0, 1.0
+        ))
         return AttackerSimulator(
             attacker_id=attacker_id,
             topology=topology,
-            sophistication=self.config.attacker_sophistication + np.random.normal(0, 0.1),
-            persistence=self.config.attacker_persistence + np.random.normal(0, 0.1),
-            adaptiveness=self.config.attacker_adaptiveness + np.random.normal(0, 0.1),
+            sophistication=sophistication,
+            persistence=persistence,
+            adaptiveness=adaptiveness,
         )
 
     # ============================================================

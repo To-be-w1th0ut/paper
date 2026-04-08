@@ -8,9 +8,9 @@ Honeypot research has evolved through three generations. **First-generation (sta
 
 **Second-generation (dynamic) honeypots** introduce adaptation mechanisms. Provos [13] proposed virtual honeypots that mirror real services in the network, and subsequent works explored configuration rotation strategies. Wagener et al. [14] presented SGNET, a self-adaptive honeypot that learns interaction scripts from attacker sessions. Dowling et al. [15] applied reinforcement learning to honeypot interaction, training a DQN agent to select responses that maximize attacker engagement time. Pauna et al. [16] used game theory to model the honeypot-attacker interaction as a Bayesian game and derived optimal deception strategies. More recently, Sun et al. [17] proposed HoneyGPT, using large language models to generate dynamic honeypot responses for SSH sessions.
 
-**Third-generation (intelligent/autonomous) honeypots** represent the emerging frontier. The concept of "honeypot swarms" was first mentioned by Chakraborty et al. (IJERT, 2026) [18], who used GANs to generate diverse honeypot content but did not address topology-level self-organization. MITRE's Engage framework [3] identifies "planned deception campaigns" as a capability gap. DeepDig [19] leveraged deep reinforcement learning for decoy deployment in cloud environments, optimizing honeypot placement as a Markov Decision Process.
+**Third-generation (intelligent/autonomous) honeypots** represent the emerging frontier. Recent work has explored generative content and learning-based adaptive defense, but these systems still do not study topology-level self-organization of honeypot swarms as the primary adaptation mechanism.
 
-**Gap:** All existing approaches — including RL-based and game-theoretic methods — operate within a **centralized control paradigm**: a single controller decides honeypot configurations. No prior work has achieved *decentralized, emergent self-organization* of honeypot topologies. EmergentHoney is the first framework where the deception network's structure and behavior emerge from local pheromone interactions without any central coordinator.
+**Gap:** Existing approaches — including RL-based and game-theoretic methods — still operate largely within a **centralized control paradigm**: a controller, optimizer, or policy decides how honeypots change. The literature still lacks a clear treatment of *decentralized, emergent self-organization* of honeypot topologies driven by local pheromone interactions.
 
 ## B. Moving Target Defense (MTD)
 
@@ -26,7 +26,7 @@ Swarm intelligence algorithms have been applied to various cybersecurity problem
 
 In the specific domain of deception, the intersection with swarm intelligence is remarkably sparse. Zhang et al. [34] used PSO to optimize honeypot placement in a static network — treating placement as a one-time combinatorial optimization problem, not a continuous self-organizing process. To the best of our knowledge, no prior work has used swarm intelligence mechanisms as the **operational logic** (rather than an optimization tool) of a deception system.
 
-**Gap:** Existing works use swarm intelligence to optimize *parameters* of security systems (feature weights, model hyperparameters, placement locations). EmergentHoney represents a paradigm shift: swarm intelligence is not optimizing the deception system — it *constitutes* the deception system. The pheromone mechanism is the system's operational protocol, not a design-time optimization tool.
+**Gap:** Existing works use swarm intelligence to optimize *parameters* of security systems (feature weights, model hyperparameters, placement locations). EmergentHoney differs in that the pheromone mechanism acts as the system's **online coordination protocol**, not merely as a design-time optimizer.
 
 ## D. LLM-Powered Security Applications
 
@@ -48,42 +48,15 @@ Table I summarizes the positioning of EmergentHoney relative to prior work acros
 | Emergent collective behavior | ✗ | ✗ | ✗ | ✗ | **✓** |
 | LLM-powered content | ✗ | Partial [17] | ✗ | ✗ | **✓** |
 | Predictive deployment | ✗ | ✗ | Partial (game anticipation) | ✗ | **✓** |
-| Zero human configuration | ✗ | ✗ (requires reward design) | ✗ (requires game modeling) | ✗ (requires objective function) | **✓** |
+| Controller-free adaptation | ✗ | ✗ | ✗ | ✗ | **✓** |
 
-As shown, EmergentHoney is the first system that simultaneously achieves decentralized self-organization, topology-level adaptation, emergent collective behavior, and zero-configuration operation — properties that are uniquely enabled by the pheromone-driven swarm intelligence paradigm.
+As shown, EmergentHoney is positioned around decentralized self-organization and topology-level adaptation, with LLM-generated content and predictive deployment acting as supporting capabilities around the core pheromone mechanism.
 
 ---
 
-### References for Related Work (partial, to be completed)
+### Bibliography Note
 
-[11] N. Provos, "A Virtual Honeypot Framework," in Proc. USENIX Security Symposium, 2004.
-[12] T-Pot - The All In One Multi Honeypot Platform, Deutsche Telekom Security, GitHub, 2023.
-[13] N. Provos, "Honeyd - A Virtual Honeypot Daemon," in Proc. DFN-CERT Workshop, 2003.
-[14] C. Wagener et al., "Self Adaptive High Interaction Honeypots Driven by Game Theory," in Proc. SSS, 2009.
-[15] S. Dowling et al., "Using Reinforcement Learning to Conceal Honeypot Functionality," in Proc. AISec Workshop, 2019.
-[16] A. Pauna et al., "On the Optimal Deployment of Honeypots: A Game-Theoretic Approach," in Proc. GameSec, 2018.
-[17] Z. Sun et al., "HoneyGPT: Breaking the Silence of Cyber Deception with LLMs," arXiv:2024. [需验证确切出处]
-[18] R. Chakraborty et al., "AI-Generated Honeypot Swarm," IJERT, vol. 15, 2026. [需验证]
-[19] H. Sun et al., "DeepDig: Deep Reinforcement Learning-based Decoy Deployment in Cloud," IEEE TDSC, 2023. [需验证]
-[20] S. Jajodia et al., Moving Target Defense: Creating Asymmetric Uncertainty for Cyber Threats, Springer, 2011.
-[21] J. H. Jafarian et al., "OpenFlow Random Host Mutation: Transparent Moving Target Defense using SDN," in Proc. HotSDN, 2012.
-[22] D. Kewley et al., "Dynamic Approaches to Thwart Adversary Intelligence Gathering," in Proc. DARPA DISCEX, 2001.
-[23] M. Garcia et al., "OS Diversity for Intrusion Tolerance," in Proc. IEEE ACSAC, 2014.
-[24] M. Thompson et al., "Software Stack Rotation for Moving Target Defense," IEEE Security & Privacy, 2020. [需验证]
-[25] R. Zhuang et al., "Towards a Theory of Moving Target Defense," in Proc. MTD Workshop, 2014.
-[26] S. Sengupta et al., "A Game Theoretic Approach to Strategy Generation for Moving Target Defense in Web Applications," in Proc. AAMAS, 2017.
-[27] G. S. Kc et al., "Countering Code-Injection Attacks With Instruction-Set Randomization," in Proc. ACM CCS, 2003.
-[28] Q. Zhu and T. Başar, "Game-Theoretic Approach to Feedback-Driven Multi-stage Moving Target Defense," in Proc. GameSec, 2013.
-[29] H. Chaalal and A. Baba-Ali, "Feature Selection Using an Improved ACO for Network Intrusion Detection," in Proc. ICMCS, 2014. [需验证]
-[30] H. Alazzam et al., "A PSO-optimized SVM for Network Anomaly Detection," Applied Soft Computing, 2020. [需验证]
-[31] D. S. A. Elminaam et al., "An Artificial Bee Colony Algorithm for Cryptographic Key Generation," J. Information Security, 2018. [需验证]
-[32] M. Khari and P. Kumar, "An Extensive Evaluation of Firefly Algorithm for Software Testing," Neural Computing and Applications, 2019. [需验证]
-[33] G. I. Sayed et al., "A Survey on Swarm Intelligence for Cybersecurity," Swarm and Evolutionary Computation, 2023. [需验证]
-[34] Y. Zhang et al., "PSO-based Optimal Honeypot Placement in Network Security," in Proc. IEEE CEC, 2019. [需验证]
-[35] G. Deng et al., "PentestGPT: An LLM-empowered Automatic Penetration Testing Tool," in Proc. USENIX Security, 2024.
-[36] R. Fang et al., "LLM Agents can Autonomously Exploit One-day Vulnerabilities," arXiv:2404.08144, 2024.
-[37] Y. Li et al., "ChatGPT for Threat Intelligence," IEEE S&P Magazine, 2024. [需验证]
-[38] A. Sharma et al., "LLM-based Security Log Analysis," in Proc. RAID, 2024. [需验证]
-[39] C. Zhou et al., "Large Language Model for Vulnerability Detection," in Proc. ACM CCS, 2024.
-[40] M. Chen et al., "Automated Incident Response with LLMs," IEEE TIFS, 2025. [需验证]
-[41] R. McKee et al., "ChatBots and Phishing: Using ChatGPT for Phishing Email Generation," in Proc. APWG eCrime, 2023. [需验证]
+The canonical bibliography for the paper is now maintained in
+`02-tex/references.bib`. Older draft-only reference lists with unresolved
+verification tags have been removed to avoid divergence from the main
+manuscript.

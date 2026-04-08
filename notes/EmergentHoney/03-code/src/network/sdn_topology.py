@@ -1,6 +1,6 @@
 """
 EmergentHoney 网络模块：SDN网络拓扑管理
-实现论文 Section VI-A 的实验环境 (SDN-based testbed)
+实现论文 Section VI-A 的 SDN-informed 仿真/仿真驱动实验环境
 """
 
 import numpy as np

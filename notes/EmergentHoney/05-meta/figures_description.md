@@ -8,5 +8,5 @@
 | Fig.4 | Deception Effectiveness Comparison | Bar/box plots: ADT, HIR, TIC across EmergentHoney vs 5 baselines | Section VI-B (RQ1) | Method effectiveness proof |
 | Fig.5 | DEI Emergence Curve | Line plot: DEI value over time, with DEI=1 horizontal reference line, showing emergence inflection point from <1 to >1 | Section VI-C (RQ2) | Proof of emergence existence |
 | Fig.6 | Ablation Study Results | Radar chart or grouped bar chart: Full system vs 6 ablation variants across all metrics | Section VI-D (RQ3) | Necessity of each component, especially pheromone irreplaceability |
-| Fig.7 | Scalability Analysis | Dual-Y-axis line plot: X-axis = network scale (50-5000), left Y-axis = ADT/HIR performance, right Y-axis = system overhead (CPU/memory) | Section VI-E (RQ4) | Scalability proof |
+| Fig.7 | Scalability Analysis | X-axis = network scale (50-200-500), showing stable ADT/HIR and bounded update cost in the released artifact | Section VI-E (RQ4) | Scalability proof |
 | Fig.8 | Adaptive Attacker Arms Race | Time-series line plot: L3 adaptive attacker's honeypot identification rate over time — attacker briefly learns to identify → EmergentHoney pheromone-driven mutation → identification rate drops again — showing "arms race" dynamics | Section VI-F (RQ5) | Most critical figure — proves self-evolution capability |

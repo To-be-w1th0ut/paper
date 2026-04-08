@@ -24,20 +24,19 @@ We are pleased to submit our manuscript entitled ``\textbf{EmergentHoney: Ant Co
 
 \textbf{Key contributions include:}
 \begin{enumerate}
-    \item A pheromone-driven self-organizing honeypot topology where deployment, migration, and mutation are governed by decentralized swarm rules (Algorithm 1), with formal convergence guarantees (Theorem 1).
-    \item A reverse ant colony model that interprets attacker reconnaissance trajectories as inverse foraging paths, enabling predictive deception deployment along anticipated attack vectors (Algorithm 2).
-    \item The Deception Emergence Index (DEI), a formally defined metric quantifying collective emergence in deception systems, with a proof that DEI $> 1$ under mild conditions (Theorem 2).
-    \item Comprehensive experimental evaluation on SDN-based testbeds (50--500 nodes) against multi-stage APT attacks, demonstrating 2.3$\times$ improvement in attacker dwell time and 68\% higher interaction rates compared to state-of-the-art baselines, with statistical significance confirmed via Wilcoxon signed-rank tests ($p < 0.001$) and large effect sizes (Cliff's $\delta > 0.71$).
+    \item A pheromone-driven self-organizing honeypot topology where deployment, migration, and mutation are governed by decentralized swarm rules (Algorithm 1), with formal convergence guarantees.
+    \item The Deception Emergence Index (DEI), a metric for quantifying collective deception capability, together with a positive-emergence analysis centered on Theorem 1.
+    \item An LLM-based phenotype layer and reverse-trajectory predictor that act as supporting modules around the core swarm mechanism.
+    \item A 72-hour SDN-informed emulation study on 50--500 node topologies showing 3.24$\,$h average attacker dwell time versus 1.66$\,$h for the best adaptive RL baseline, with a 71\% reduction in honeypot identification rate.
 \end{enumerate}
 
 \textbf{Relevance to SWEVO.} This work sits squarely at the intersection of swarm intelligence and cybersecurity — two fields that \textit{Swarm and Evolutionary Computation} has championed. We establish a rigorous mathematical isomorphism between ant colony foraging and cyber deception, going beyond the common metaphorical use of bio-inspired analogies. The pheromone update equations, convergence proofs, and emergence analysis directly extend the ACO theoretical framework into a novel application domain. We believe this cross-pollination will be of significant interest to the journal's readership.
 
 \textbf{Novelty statement.} To the best of our knowledge, this is the first work to:
-(i)~apply pheromone-based swarm self-organization as the \emph{operational logic} of a deception system rather than as an optimization tool;
-(ii)~formally define and prove emergence in cyber deception (DEI $> 1$);
-(iii)~combine reverse ACO attacker modeling with LLM-powered phenotype generation for adaptive honeypot content.
+(i)~treat pheromone-based swarm self-organization as the \emph{operational logic} of a deception system rather than as an offline optimizer; and
+(ii)~connect that mechanism to an explicit emergence metric (DEI) and a released artifact-level evaluation pipeline.
 
-\textbf{Ethical considerations.} All experiments were conducted on isolated testbed networks with no real user data. The deception techniques described are purely defensive and comply with ethical guidelines for security research. We discuss responsible deployment considerations in Section VII.
+\textbf{Ethical considerations.} All experiments were conducted in an isolated simulation/emulation environment with no real user data. The deception techniques described are purely defensive and comply with ethical guidelines for security research. We discuss responsible deployment considerations in Section VII.
 
 This manuscript has not been published elsewhere and is not under consideration by any other journal. All authors have read and approved the submitted version.
 

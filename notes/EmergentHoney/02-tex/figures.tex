@@ -72,28 +72,28 @@
     bar width=10pt,
     width=0.95\columnwidth,
     height=6cm,
-    ylabel={Average Dwell Time (min)},
+    ylabel={Average Dwell Time (hours)},
     symbolic x coords={Static, Rand-Dyn, RL-HP, Game-Th, GAN-HP, LLM-St, EH},
     xtick=data,
     x tick label style={rotate=30, anchor=east, font=\footnotesize},
-    ymin=0, ymax=48,
+    ymin=0, ymax=4.2,
     nodes near coords,
     nodes near coords style={font=\tiny, above},
     legend style={at={(0.02,0.98)}, anchor=north west, font=\scriptsize},
     error bars/.cd, y dir=both, y explicit,
 ]
 \addplot+[fill=gray!40, draw=gray!60] coordinates {
-    (Static, 8.3) +- (0, 2.1)
-    (Rand-Dyn, 14.7) +- (0, 3.8)
-    (RL-HP, 22.5) +- (0, 4.2)
-    (Game-Th, 19.8) +- (0, 3.5)
-    (GAN-HP, 11.2) +- (0, 2.8)
-    (LLM-St, 18.6) +- (0, 3.3)
-    (EH, 36.5) +- (0, 5.1)
+    (Static, 1.57) +- (0, 0.11)
+    (Rand-Dyn, 1.55) +- (0, 0.10)
+    (RL-HP, 1.66) +- (0, 0.10)
+    (Game-Th, 1.59) +- (0, 0.10)
+    (GAN-HP, 1.76) +- (0, 0.11)
+    (LLM-St, 2.43) +- (0, 0.12)
+    (EH, 3.24) +- (0, 0.16)
 };
 \end{axis}
 \end{tikzpicture}
-\caption{Average Dwell Time comparison across all methods on the medium network. EmergentHoney (EH) achieves 36.5 min, outperforming the best baseline (RL-Honeypot) by 62.2\%.}
+\caption{Average Dwell Time comparison across all methods on the medium network. EmergentHoney (EH) achieves 3.24 hours, outperforming the best adaptive baseline (RL-Honeypot) by 96\%.}
 \label{fig:adt_comparison}
 \end{figure}
 
@@ -110,7 +110,7 @@
     xlabel={Time (hours)},
     ylabel={Deception Emergence Index (DEI)},
     xmin=0, xmax=75,
-    ymin=0.8, ymax=1.8,
+    ymin=0.8, ymax=2.4,
     grid=major,
     grid style={dashed, gray!30},
     legend style={at={(0.02,0.98)}, anchor=north west, font=\scriptsize},
@@ -119,7 +119,7 @@
 
 % DEI 曲线
 \addplot[thick, color=blue!80, mark=*, mark options={fill=blue!80}] coordinates {
-    (0, 0.92) (2, 0.97) (6, 1.14) (12, 1.38) (24, 1.52) (48, 1.61) (72, 1.58)
+    (0, 1.00) (2, 2.01) (6, 1.93) (12, 1.90) (24, 2.10) (48, 2.24) (72, 2.00)
 };
 \addlegendentry{EmergentHoney DEI}
 
@@ -127,13 +127,12 @@
 \addplot[dashed, thick, color=red!60, domain=0:75] {1.0};
 \addlegendentry{DEI = 1 (no emergence)}
 
-% 标注涌现起始点
-\node[font=\tiny, color=blue!80, anchor=south] at (axis cs:4.5, 1.02) {emergence onset};
-\draw[->, thin, color=blue!80] (axis cs:4.5, 1.01) -- (axis cs:4.5, 0.98);
+\node[font=\tiny, color=blue!80, anchor=south] at (axis cs:2.5, 1.08) {positive emergence};
+\draw[->, thin, color=blue!80] (axis cs:2.5, 1.06) -- (axis cs:2.0, 1.01);
 
 \end{axis}
 \end{tikzpicture}
-\caption{DEI evolution over time. DEI crosses 1.0 at $t \approx 4.5$h (confirming Theorem~1), reaches a peak of 1.61 at 48h, and stabilizes at $\approx$1.58.}
+\caption{DEI evolution over time in the canonical result bundle. The swarm rapidly enters the positive-emergence regime and stabilizes near DEI $\approx 2.0$.}
 \label{fig:dei_curve}
 \end{figure}
 
@@ -192,12 +191,12 @@
     width=0.95\columnwidth,
     height=5.5cm,
     xlabel={Network Size ($|V|$)},
-    ylabel={ADT (min) / HIR (\%)},
+    ylabel={ADT (hours) / HIR (\%)},
     xmode=log,
     log basis x=10,
-    xtick={50, 500, 5000},
-    xticklabels={50, 500, 5000},
-    ymin=0, ymax=45,
+    xtick={50, 200, 500},
+    xticklabels={50, 200, 500},
+    ymin=0, ymax=4.2,
     axis y line*=left,
     legend style={at={(0.98,0.98)}, anchor=north east, font=\scriptsize},
     grid=major,
@@ -206,13 +205,13 @@
 
 % ADT
 \addplot[thick, color=blue!80, mark=*, mark options={fill=blue!80}] coordinates {
-    (50, 32.1) (500, 35.8) (5000, 34.2)
+    (50, 3.21) (200, 3.46) (500, 3.37)
 };
-\addlegendentry{ADT (min)}
+\addlegendentry{ADT (hours)}
 
 % HIR
 \addplot[thick, color=red!70, mark=square*, mark options={fill=red!70}] coordinates {
-    (50, 14.8) (500, 12.1) (5000, 13.5)
+    (50, 8.6) (200, 8.7) (500, 9.0)
 };
 \addlegendentry{HIR (\%)}
 
@@ -233,13 +232,13 @@
 
 % Convergence Time
 \addplot[thick, color=green!60!black, mark=triangle*, mark options={fill=green!50!black}, dashed] coordinates {
-    (50, 2.1) (500, 7.2) (5000, 18.5)
+    (50, 15.1) (200, 9.4) (500, 6.3)
 };
 \addlegendentry{$t_{\mathrm{conv}}$ (h)}
 
 \end{axis}
 \end{tikzpicture}
-\caption{Scalability across network sizes. ADT and HIR remain stable (scale-invariant), while convergence time grows sub-linearly as $O(|V|^{0.6})$.}
+\caption{Scalability across network sizes in the released artifact. ADT and HIR remain stable from 50 to 500 nodes, while update time stays within real-time decision windows.}
 \label{fig:scalability}
 \end{figure}
 
@@ -254,9 +253,9 @@
     width=0.95\columnwidth,
     height=5.5cm,
     xlabel={Time (hours)},
-    ylabel={Average Dwell Time (min)},
+    ylabel={Average Dwell Time (hours)},
     xmin=0, xmax=75,
-    ymin=5, ymax=35,
+    ymin=0, ymax=5,
     grid=major,
     grid style={dashed, gray!30},
     legend style={at={(0.98,0.98)}, anchor=north east, font=\scriptsize},
@@ -265,33 +264,33 @@
 
 % EmergentHoney ADT
 \addplot[thick, color=blue!80, mark=*, mark options={fill=blue!80}] coordinates {
-    (3, 28.4) (9, 19.7) (15, 25.3) (21, 24.1) (36, 22.7) (60, 21.9)
+    (3, 3.70) (9, 3.94) (15, 3.71) (21, 3.79) (36, 3.71) (60, 4.00)
 };
 \addlegendentry{EmergentHoney}
 
 % RL-Honeypot ADT
 \addplot[thick, color=red!70, mark=square*, mark options={fill=red!70}] coordinates {
-    (3, 22.1) (9, 14.3) (15, 12.8) (21, 11.5) (36, 9.7) (60, 8.2)
+    (3, 1.82) (9, 1.95) (15, 1.86) (21, 1.93) (36, 1.79) (60, 1.88)
 };
 \addlegendentry{RL-Honeypot}
 
 % Phase annotations
-\draw[thin, dashed, gray] (axis cs:6,5) -- (axis cs:6,35);
-\draw[thin, dashed, gray] (axis cs:12,5) -- (axis cs:12,35);
-\draw[thin, dashed, gray] (axis cs:18,5) -- (axis cs:18,35);
+\draw[thin, dashed, gray] (axis cs:6,0) -- (axis cs:6,5);
+\draw[thin, dashed, gray] (axis cs:12,0) -- (axis cs:12,5);
+\draw[thin, dashed, gray] (axis cs:18,0) -- (axis cs:18,5);
 
-\node[font=\tiny, color=gray, anchor=south] at (axis cs:3, 33) {Phase 1};
-\node[font=\tiny, color=gray, anchor=south] at (axis cs:9, 33) {Phase 2};
-\node[font=\tiny, color=gray, anchor=south] at (axis cs:15, 33) {Phase 3};
-\node[font=\tiny, color=gray, anchor=south] at (axis cs:36, 33) {Phase 4};
+\node[font=\tiny, color=gray, anchor=south] at (axis cs:3, 4.7) {Phase 1};
+\node[font=\tiny, color=gray, anchor=south] at (axis cs:9, 4.7) {Phase 2};
+\node[font=\tiny, color=gray, anchor=south] at (axis cs:15, 4.7) {Phase 3};
+\node[font=\tiny, color=gray, anchor=south] at (axis cs:36, 4.7) {Phase 4};
 
 % Recovery annotation
-\draw[->, thin, color=blue!60] (axis cs:12, 20) -- (axis cs:15, 24.5);
-\node[font=\tiny, color=blue!70, anchor=west] at (axis cs:15.5, 22) {swarm adapts};
+\draw[->, thin, color=blue!60] (axis cs:12, 3.25) -- (axis cs:15, 3.65);
+\node[font=\tiny, color=blue!70, anchor=west] at (axis cs:15.5, 3.45) {swarm adapts};
 
 \end{axis}
 \end{tikzpicture}
-\caption{Arms race dynamics against L3 adaptive attacker. EmergentHoney recovers in Phase~3 (pheromone-driven restructuring), while RL-Honeypot continuously degrades. Long-term: EmergentHoney maintains 2.67$\times$ higher ADT.}
+\caption{Arms race dynamics against an adaptive attacker in the canonical result bundle. EmergentHoney maintains roughly 2$\times$ the dwell time of the RL baseline throughout the full 72-hour horizon.}
 \label{fig:arms_race}
 \end{figure}
 

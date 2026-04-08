@@ -1,9 +1,13 @@
 Data Availability Statement
 
-All experimental data and source code used in this study are available in the
-supplementary materials accompanying this submission. The simulation framework
-is fully self-contained and can reproduce all reported results using the provided
-random seeds (seed = 42). No external datasets were used in this study.
+The repository accompanying this manuscript includes:
 
-Upon acceptance, the complete source code will be released as an open-source
-repository under the MIT License.
+1. a canonical result bundle used for all manuscript tables and figures;
+2. scripts that regenerate the published tables and figures from that bundle;
+3. a prototype simulator implementing the pheromone-driven self-organization logic.
+
+This version of the paper reports an SDN-informed simulation/emulation study.
+It does not claim that all reported results come from a completed production
+deployment or a full hardware-backed deployment campaign. No external datasets were used.
+
+Upon acceptance, the artifact will be released as an open-source repository.
