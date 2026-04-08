@@ -1,0 +1,149 @@
+\documentclass[12pt,a4paper]{article}
+
+% ============================================================
+% AI+Security 论文模板
+% 作者: To-be-w1th0ut
+% 描述: 用于撰写 AI 与安全交叉领域学术论文的 LaTeX 模板
+% ============================================================
+
+% --- 基础宏包 ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{cite}
+
+% --- 页面设置 ---
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% --- 颜色支持 ---
+\usepackage{xcolor}
+
+% --- 定理环境 ---
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+
+% --- 文档信息 ---
+\title{\textbf{Your Paper Title Here}\\
+\large A Study on AI and Security}
+\author{Your Name\\
+\textit{Your Institution}\\
+\texttt{your.email@example.com}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+在此输入你的摘要。摘要应简洁地概括研究的目的、方法、主要结果和结论。
+通常 150-250 字为宜。
+
+\medskip
+\noindent\textbf{Keywords:} Artificial Intelligence, Cybersecurity, Machine Learning, Deep Learning, Threat Detection
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+在此介绍研究背景、动机和主要贡献。
+
+\subsection{Background}
+介绍 AI 与安全交叉领域的研究背景。
+
+\subsection{Motivation}
+阐述本研究的动机和现实意义。
+
+\subsection{Contributions}
+列出本文的主要贡献：
+\begin{itemize}
+    \item 贡献一
+    \item 贡献二
+    \item 贡献三
+\end{itemize}
+
+\section{Related Work}
+\label{sec:related_work}
+
+综述相关研究工作，包括：
+\begin{itemize}
+    \item AI 在安全领域的应用现状
+    \item 传统安全方法的局限性
+    \item 现有研究的不足
+\end{itemize}
+
+\section{Methodology}
+\label{sec:methodology}
+
+\subsection{Problem Formulation}
+形式化描述研究问题。
+
+\subsection{Proposed Approach}
+详细介绍你提出的方法。
+
+\begin{algorithm}[t]
+\caption{Your Algorithm Name}
+\label{alg:main}
+\begin{algorithmic}[1]
+\State \textbf{Input:} Training data $\mathcal{D}$, model parameters $\theta$
+\State \textbf{Output:} Trained model $f_\theta$
+\While{not converged}
+    \State Sample batch $\mathcal{B} \sim \mathcal{D}$
+    \State Compute gradient $g = \nabla_\theta \mathcal{L}(\mathcal{B}; \theta)$
+    \State Update $\theta \leftarrow \theta - \eta g$
+\EndWhile
+\State \Return $f_\theta$
+\end{algorithmic}
+\end{algorithm}
+
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Experimental Setup}
+描述实验环境、数据集和评估指标。
+
+\subsection{Results}
+展示实验结果。
+
+\begin{table}[t]
+\centering
+\caption{Experimental Results Comparison}
+\label{tab:results}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Method} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} \\
+\midrule
+Baseline & 0.85 & 0.83 & 0.82 \\
+Method A & 0.89 & 0.88 & 0.87 \\
+\textbf{Ours} & \textbf{0.94} & \textbf{0.93} & \textbf{0.92} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Analysis}
+分析实验结果，解释原因。
+
+\section{Discussion}
+\label{sec:discussion}
+
+讨论方法的优势、局限性和未来改进方向。
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+总结全文，重申主要贡献和意义。
+
+% --- 参考文献 ---
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
